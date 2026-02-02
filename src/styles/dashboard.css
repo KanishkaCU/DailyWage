@@ -1,0 +1,86 @@
+/* Dashboard main layout */
+.dashboard-container {
+  padding: 30px;
+  background: #f4f5f7;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #111827;
+}
+
+.dashboard-header p {
+  margin-top: 5px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Cards section */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 25px;
+}
+
+/* Individual card */
+.dashboard-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.dashboard-card p {
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* Actions section */
+.dashboard-actions {
+  margin-top: 35px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.dashboard-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dashboard-actions button:hover {
+  background: #000000;
+}
+
+/* Section blocks (for future use) */
+.dashboard-section {
+  margin-top: 40px;
+}
+
+.dashboard-section h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #111827;
+}
