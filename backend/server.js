@@ -7,14 +7,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ROUTES
-const workerRoutes = require("./routes/WorkerRoutes");
+// routes
+const workerRoutes = require("./routes/workerRoutes");
 const userRoutes = require("./routes/userRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 app.use("/api/workers", workerRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
-// test route
 app.get("/", (req, res) => {
   res.send("Backend running");
 });

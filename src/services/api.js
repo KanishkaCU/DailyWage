@@ -1,66 +1,99 @@
 const BASE_URL = "http://localhost:5000/api";
 
-// =======================
-// WORKER APIs (you already have these)
-// =======================
-
-// Add worker
-export const addWorker = async (workerData) => {
-  const response = await fetch(`${BASE_URL}/workers`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(workerData),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to add worker");
-  }
-
-  return response.json();
-};
-
-// Get all workers
-export const getWorkers = async () => {
-  const response = await fetch(`${BASE_URL}/workers`);
-  return response.json();
-};
-
-// =======================
-// USER AUTH APIs (ADD THIS)
-// =======================
-
-// Signup
+// ================= USERS =================
 export const signupUser = async (data) => {
-  const response = await fetch(`${BASE_URL}/users`, {
+  const res = await fetch(`${BASE_URL}/users`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
+  if (!res.ok) {
     throw new Error("Signup failed");
   }
 
-  return response.json();
+  return res.json();
 };
 
-// Login
 export const loginUser = async (data) => {
-  const response = await fetch(`${BASE_URL}/users/login`, {
+  const res = await fetch(`${BASE_URL}/users/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
+  if (!res.ok) {
     throw new Error("Invalid credentials");
   }
 
-  return response.json();
+  return res.json();
+};
+
+// ================= WORKERS =================
+export const addWorker = async (data) => {
+  const res = await fetch(`${BASE_URL}/workers`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+};
+
+export const getWorkers = async () => {
+  const res = await fetch(`${BASE_URL}/workers`);
+  return res.json();
+};
+
+// ================= ATTENDANCE =================
+export const markAttendance = async (data) => {
+  const res = await fetch(`${BASE_URL}/attendance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+};
+
+export const getAttendance = async () => {
+  const res = await fetch(`${BASE_URL}/attendance`);
+  return res.json();
+};
+export const updateAttendance = async (id, data) => {
+  const res = await fetch(`http://localhost:5000/api/attendance/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+};
+export const getWorkerAttendance = async (workerId) => {
+  const res = await fetch(`http://localhost:5000/api/attendance`);
+  const data = await res.json();
+  return data.filter((r) => r.workerId._id === workerId);
+};
+
+export const updatePaidAmount = async (workerId, paidAmount) => {
+  const res = await fetch(
+    `http://localhost:5000/api/workers/${workerId}/pay`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paidAmount }),
+    }
+  );
+  return res.json();
+};
+export const addPayment = async (workerId, data) => {
+  const res = await fetch(
+    `http://localhost:5000/api/workers/${workerId}/pay`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }
+  );
+  return res.json();
 };

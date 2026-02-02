@@ -43,7 +43,7 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (err) {
-      setError("Invalid username or password");
+      setError(err.message);
     }
   };
 
@@ -53,12 +53,11 @@ function Login() {
         <center>
           <h1>DailyWage</h1>
           <h2>{isSignup ? "Sign Up" : "Login"}</h2>
-          <br />
         </center>
 
         <input
           type="text"
-          placeholder="Username or Email"
+          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -79,25 +78,18 @@ function Login() {
           />
         )}
 
-        {error && (
-          <p style={{ color: "red", fontSize: "13px" }}>{error}</p>
-        )}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
         <button onClick={handleSubmit}>
           {isSignup ? "Sign Up" : "Login"}
         </button>
 
         <p
-          style={{
-            marginTop: "15px",
-            fontSize: "14px",
-            cursor: "pointer",
-            textAlign: "center",
-          }}
           onClick={() => {
             setIsSignup(!isSignup);
             setError("");
           }}
+          style={{ cursor: "pointer", textAlign: "center" }}
         >
           {isSignup
             ? "Already have an account? Login"
