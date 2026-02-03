@@ -16,7 +16,6 @@ function AddWorker() {
     try {
       await addWorker({ name, phone });
       setMessage("Worker added successfully ✅");
-
       setName("");
       setPhone("");
     } catch (error) {
@@ -26,11 +25,13 @@ function AddWorker() {
 
   return (
     <div className="dashboard-container">
+      {/* HEADER – UNCHANGED */}
       <div className="dashboard-header">
         <h1>Add Worker</h1>
         <p>Enter worker details</p>
       </div>
 
+      {/* FORM CARD – UNCHANGED */}
       <div className="dashboard-card" style={{ maxWidth: "400px" }}>
         <input
           type="text"
@@ -38,7 +39,8 @@ function AddWorker() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <br /><br />
+        <br />
+        <br />
 
         <input
           type="text"
@@ -46,13 +48,29 @@ function AddWorker() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <br /><br />
+        <br />
+        <br />
 
         <button onClick={handleSubmit}>Add Worker</button>
 
         {message && (
-          <p style={{ marginTop: "15px", fontSize: "14px" }}>{message}</p>
+          <p style={{ marginTop: "15px", fontSize: "14px" }}>
+            {message}
+          </p>
         )}
+      </div>
+
+      {/* BACK BUTTON – AT BOTTOM (SAFE) */}
+      <div style={{ marginTop: "30px" }}>
+        <button
+          onClick={() => window.history.back()}
+          style={{
+            padding: "6px 12px",
+            cursor: "pointer",
+          }}
+        >
+        Done
+        </button>
       </div>
     </div>
   );

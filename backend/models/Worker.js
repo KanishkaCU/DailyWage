@@ -11,16 +11,11 @@ const workerSchema = new mongoose.Schema({
   },
   payments: [
     {
-      amount: {
-        type: Number,
-        required: true,
-      },
-      date: {
-        type: String,
-        required: true,
-      },
+      amount: Number,
+      date: String,
+      purpose: String,
     },
   ],
 });
 
-module.exports = mongoose.model("worker", workerSchema);
+module.exports = mongoose.model("Worker", workerSchema);

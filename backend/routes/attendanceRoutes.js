@@ -1,56 +1,66 @@
 const express = require("express");
-const Attendance = require("../models/attendance");
+const Attendance = require("../models/Attendance");
 
 const router = express.Router();
 
-// MARK ATTENDANCE
+/* ======================
+   POST ATTENDANCE
+====================== */
 router.post("/", async (req, res) => {
   try {
     const { workerId, date, status, wage } = req.body;
 
-    // one attendance per worker per day
-    const existing = await Attendance.findOne({ workerId, date });
-    if (existing) {
-      return res.status(400).json({ message: "Attendance already marked" });
+    if (!workerId || !date || !status) {
+      return res.status(400).json({ message: "Missing fields" });
     }
 
-    const attendance = new Attendance({
+    const alreadyMarked = await Attendance.findOne({ workerId, date });
+    if (alreadyMarked) {
+      return res
+        .status(400)
+        .json({ message: "Attendance already marked" });
+    }
+
+    const record = new Attendance({
       workerId,
       date,
       status,
       wage: status === "Present" ? wage : 0,
     });
 
-    await attendance.save();
-    res.status(201).json(attendance);
+    await record.save();
+    res.status(201).json(record);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to mark attendance" });
   }
 });
 
-// GET ALL ATTENDANCE (for reports)
+/* ======================
+   GET ALL ATTENDANCE
+====================== */
 router.get("/", async (req, res) => {
-  const records = await Attendance.find().populate("workerId");
-  res.json(records);
+  try {
+    const { date } = req.query;
+    const filter = date ? { date } : {};
+    const records = await Attendance.find(filter).populate("workerId");
+    res.json(records);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch attendance" });
+  }
 });
 
-// UPDATE ATTENDANCE
-router.put("/:id", async (req, res) => {
+/* ======================
+   GET ATTENDANCE BY WORKER
+====================== */
+router.get("/:workerId", async (req, res) => {
   try {
-    const { status, wage } = req.body;
-
-    const updated = await Attendance.findByIdAndUpdate(
-      req.params.id,
-      {
-        status,
-        wage: status === "Present" ? wage : 0,
-      },
-      { new: true }
-    );
-
-    res.json(updated);
+    const records = await Attendance.find({
+      workerId: req.params.workerId,
+    });
+    res.json(records);
   } catch (err) {
-    res.status(500).json({ message: "Failed to update attendance" });
+    res.status(500).json({ message: "Failed to fetch worker attendance" });
   }
 });
 

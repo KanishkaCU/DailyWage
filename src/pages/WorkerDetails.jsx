@@ -4,24 +4,36 @@ import {
   getWorkers,
   getWorkerAttendance,
   addPayment,
+  editPayment,
+  deletePayment,
 } from "../services/api";
 
 function WorkerDetails() {
   const { id } = useParams();
+
   const [worker, setWorker] = useState(null);
-  const [records, setRecords] = useState([]);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+
   const [amount, setAmount] = useState("");
+  const [reason, setReason] = useState("");
+
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editAmount, setEditAmount] = useState("");
+  const [editReason, setEditReason] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
 
+  /* ======================
+     LOAD DATA
+  ====================== */
   useEffect(() => {
     const loadData = async () => {
       const workers = await getWorkers();
-      const current = workers.find((w) => w._id === id);
-      setWorker(current);
+      const currentWorker = workers.find((w) => w._id === id);
+      setWorker(currentWorker);
 
-      const attendance = await getWorkerAttendance(id);
-      setRecords(attendance);
+      const attendance = await getWorkerAttendance(id).catch(() => []);
+      setAttendanceRecords(attendance || []);
     };
 
     loadData();
@@ -29,52 +41,98 @@ function WorkerDetails() {
 
   if (!worker) return <p>Loading...</p>;
 
-  const daysWorked = records.filter((r) => r.status === "Present").length;
-  const totalEarned = records.reduce((sum, r) => sum + r.wage, 0);
+  /* ======================
+     CALCULATIONS (FIXED)
+  ====================== */
 
-  const totalPaid = worker.payments.reduce(
-    (sum, p) => sum + p.amount,
+  // ✅ TOTAL EARNED — ONLY FROM ATTENDANCE
+  const totalEarned = attendanceRecords.reduce(
+    (sum, record) => sum + (record.wage || 0),
     0
   );
 
+  // ✅ TOTAL PAID — ONLY FROM PAYMENTS
+  const totalPaid = (worker.payments || []).reduce(
+    (sum, payment) => sum + (payment.amount || 0),
+    0
+  );
+
+  // ✅ BALANCE
   const balance = totalEarned - totalPaid;
 
-  const savePayment = async () => {
+  /* ======================
+     ACTIONS
+  ====================== */
+
+  const handleAddPayment = async () => {
     if (!amount) return;
 
-    const updated = await addPayment(id, {
+    const updatedWorker = await addPayment(id, {
       amount: Number(amount),
       date: today,
+      purpose: reason,
     });
 
-    setWorker(updated);
+    setWorker(updatedWorker);
     setAmount("");
+    setReason("");
   };
 
+  const handleEditPayment = async (index) => {
+    const updatedWorker = await editPayment(id, index, {
+      amount: Number(editAmount),
+      purpose: editReason,
+    });
+
+    setWorker(updatedWorker);
+    setEditingIndex(null);
+  };
+
+  const handleDeletePayment = async (index) => {
+    if (!window.confirm("Are you sure you want to delete this payment?")) return;
+
+    const updatedWorker = await deletePayment(id, index);
+    setWorker(updatedWorker);
+  };
+
+  /* ======================
+     UI
+  ====================== */
   return (
     <div style={{ padding: "20px" }}>
-      <h1>{worker.name}</h1>
+      <button onClick={() => window.history.back()}>← Back</button>
+
+      <h2>{worker.name}</h2>
       <p>Phone: {worker.phone}</p>
 
       <hr />
 
-      <p>Days Worked: <strong>{daysWorked}</strong></p>
-      <p>Total Earned: <strong>₹{totalEarned}</strong></p>
-      <p>Total Paid: <strong>₹{totalPaid}</strong></p>
-      <p>Balance: <strong>₹{balance}</strong></p>
+      <p>
+        <strong>Total Earned:</strong> ₹{totalEarned}
+      </p>
+      <p>
+        <strong>Total Paid:</strong> ₹{totalPaid}
+      </p>
+      <p>
+        <strong>Balance:</strong> ₹{balance}
+      </p>
 
       <hr />
 
       <h3>Add Payment</h3>
       <input
         type="number"
-        placeholder="Enter amount"
+        placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-      <button onClick={savePayment} style={{ marginLeft: "10px" }}>
-        Add
-      </button>
+      <input
+        type="text"
+        placeholder="Reason"
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+      />
+      <button onClick={handleAddPayment}>Add</button>
 
       <h3 style={{ marginTop: "20px" }}>Payment History</h3>
 
@@ -82,9 +140,49 @@ function WorkerDetails() {
         <p>No payments yet</p>
       ) : (
         <ul>
-          {worker.payments.map((p, index) => (
-            <li key={index}>
-              {p.date} – ₹{p.amount}
+          {worker.payments.map((payment, index) => (
+            <li key={index} style={{ marginBottom: "8px" }}>
+              {editingIndex === index ? (
+                <>
+                  <input
+                    type="number"
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    value={editReason}
+                    onChange={(e) => setEditReason(e.target.value)}
+                  />
+                  <button onClick={() => handleEditPayment(index)}>
+                    Save
+                  </button>
+                  <button onClick={() => setEditingIndex(null)}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  {payment.date} – ₹{payment.amount}
+                  {payment.purpose ? ` (${payment.purpose})` : ""}
+                  <button
+                    style={{ marginLeft: "8px" }}
+                    onClick={() => {
+                      setEditingIndex(index);
+                      setEditAmount(payment.amount);
+                      setEditReason(payment.purpose || "");
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    style={{ marginLeft: "6px", color: "red" }}
+                    onClick={() => handleDeletePayment(index)}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>

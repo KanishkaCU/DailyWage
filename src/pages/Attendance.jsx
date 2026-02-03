@@ -58,6 +58,8 @@ function Attendance() {
 
   return (
     <div style={{ padding: "20px" }}>
+
+
       <h1>Attendance</h1>
       <p>Date: {today}</p>
 
@@ -115,6 +117,16 @@ function Attendance() {
           </div>
         ))
       )}
+      <div>
+        <button
+          onClick={() => window.history.back()}
+          style={{ marginBottom: "10px" }}
+        >
+          Done
+        </button>
+
+        {/* existing attendance UI */}
+      </div>
     </div>
   );
 }
