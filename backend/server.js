@@ -11,10 +11,8 @@ app.use(express.json());
 const workerRoutes = require("./routes/workerRoutes");
 const userRoutes = require("./routes/userRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
-const attendanceRoutes = require("./routes/attendanceRoutes");
 
-app.use("/api/attendance", attendanceRoutes);
-
+// route usage
 app.use("/api/workers", workerRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/attendance", attendanceRoutes);
