@@ -7,12 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// routes
-const workerRoutes = require("./routes/workerRoutes");
+const workerRoutes = require("./routes/WorkerRoutes");
 const userRoutes = require("./routes/userRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 
-// route usage
 app.use("/api/workers", workerRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/attendance", attendanceRoutes);

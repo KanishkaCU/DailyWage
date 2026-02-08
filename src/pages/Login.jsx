@@ -8,6 +8,7 @@ function Login() {
 
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // ✅ NEW
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,6 +17,18 @@ function Login() {
     /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
 
   const handleSubmit = async () => {
+    setError("");
+
+    if (!username || !password) {
+      setError("Username and password are required");
+      return;
+    }
+
+    if (isSignup && !email) {
+      setError("Email is required for signup");
+      return;
+    }
+
     if (!passwordRegex.test(password)) {
       setError(
         "Password must be at least 8 characters and include a number and special character"
@@ -29,21 +42,27 @@ function Login() {
     }
 
     try {
-      setError("");
-
       if (isSignup) {
-        await signupUser({ username, password });
+        // ✅ SIGN UP WITH EMAIL
+        await signupUser({ username, email, password });
+
         alert("Signup successful! Please login.");
         setIsSignup(false);
         setUsername("");
+        setEmail("");
         setPassword("");
         setConfirmPassword("");
       } else {
-        await loginUser({ username, password });
+        // ✅ LOGIN
+        const res = await loginUser({ username, password });
+
+        localStorage.setItem("userId", res.userId);
+        localStorage.setItem("username", res.username);
+
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Something went wrong");
     }
   };
 
@@ -62,6 +81,16 @@ function Login() {
           onChange={(e) => setUsername(e.target.value)}
         />
 
+        {/* ✅ EMAIL ONLY FOR SIGNUP */}
+        {isSignup && (
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        )}
+
         <input
           type="password"
           placeholder="Password"
@@ -78,7 +107,9 @@ function Login() {
           />
         )}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <p style={{ color: "red", fontSize: "14px" }}>{error}</p>
+        )}
 
         <button onClick={handleSubmit}>
           {isSignup ? "Sign Up" : "Login"}
@@ -89,7 +120,7 @@ function Login() {
             setIsSignup(!isSignup);
             setError("");
           }}
-          style={{ cursor: "pointer", textAlign: "center" }}
+          style={{ cursor: "pointer", textAlign: "center", marginTop: "10px" }}
         >
           {isSignup
             ? "Already have an account? Login"

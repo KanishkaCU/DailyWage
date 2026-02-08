@@ -1,24 +1,20 @@
 const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   workerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Worker",
-    required: true,
   },
-  date: {
-    type: String, // YYYY-MM-DD
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["Present", "Absent"],
-    required: true,
-  },
-  wage: {
-    type: Number,
-    default: 0,
-  },
+  date: String,
+  status: String,
+  wage: Number,
 });
+
+attendanceSchema.index({ workerId: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model("Attendance", attendanceSchema);

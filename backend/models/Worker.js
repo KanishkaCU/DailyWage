@@ -1,19 +1,18 @@
 const mongoose = require("mongoose");
 
 const workerSchema = new mongoose.Schema({
-  name: {
-    type: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
-  phone: {
-    type: String,
-    required: true,
-  },
+  name: String,
+  phone: String,
   payments: [
     {
       amount: Number,
+      reason: String,
       date: String,
-      purpose: String,
     },
   ],
 });

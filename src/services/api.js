@@ -1,119 +1,134 @@
 const BASE_URL = "http://localhost:5000/api";
 
-/* ======================
-   AUTH
-====================== */
+/* ================= AUTH ================= */
 
-export const loginUser = async (data) => {
+export const loginUser = async ({ username, password }) => {
   const res = await fetch(`${BASE_URL}/users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ username, password }),
   });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Login failed");
-  }
-
-  return res.json();
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Login failed");
+  return result;
 };
 
-export const signupUser = async (data) => {
+export const signupUser = async ({ username, email, password }) => {
   const res = await fetch(`${BASE_URL}/users/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ username, email, password }),
   });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Signup failed");
-  }
-
-  return res.json();
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Signup failed");
+  return result;
 };
 
-/* ======================
-   WORKERS
-====================== */
+/* ================= WORKERS ================= */
 
 export const getWorkers = async () => {
-  const res = await fetch(`${BASE_URL}/workers`);
+  const userId = localStorage.getItem("userId");
+  const res = await fetch(`${BASE_URL}/workers?userId=${userId}`);
+
+  if (!res.ok) throw new Error("Failed to fetch workers");
   return res.json();
 };
 
-export const addWorker = async (data) => {
+export const addWorker = async ({ name, phone }) => {
+  const userId = localStorage.getItem("userId");
+
   const res = await fetch(`${BASE_URL}/workers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ name, phone, userId }),
   });
+
+  if (!res.ok) throw new Error("Failed to add worker");
   return res.json();
 };
 
-/* ======================
-   ATTENDANCE
-====================== */
+/* ================= ATTENDANCE ================= */
 
-export const markAttendance = async (data) => {
+export const markAttendance = async ({
+  workerId,
+  date,
+  status,
+  wage,
+}) => {
+  const userId = localStorage.getItem("userId");
+
   const res = await fetch(`${BASE_URL}/attendance`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      workerId,
+      date,
+      status,
+      wage,
+      userId,
+    }),
   });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Attendance failed");
-  }
-
-  return res.json();
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Attendance failed");
+  return result;
 };
 
 export const getAttendance = async (date) => {
-  const url = date
-    ? `${BASE_URL}/attendance?date=${date}`
-    : `${BASE_URL}/attendance`;
+  const userId = localStorage.getItem("userId");
 
-  const res = await fetch(url);
+  const res = await fetch(
+    `${BASE_URL}/attendance?date=${date}&userId=${userId}`
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch attendance");
   return res.json();
 };
 
-export const getWorkerAttendance = async (id) => {
-  const res = await fetch(`${BASE_URL}/attendance/${id}`);
+export const getWorkerAttendance = async (workerId) => {
+  const res = await fetch(`${BASE_URL}/attendance/${workerId}`);
+
+  if (!res.ok) throw new Error("Failed to fetch worker attendance");
   return res.json();
 };
 
-/* ======================
-   PAYMENTS
-====================== */
+/* ================= PAYMENTS ================= */
 
-export const addPayment = async (id, data) => {
-  const res = await fetch(`${BASE_URL}/workers/${id}/pay`, {
+export const addPayment = async (workerId, data) => {
+  const res = await fetch(`${BASE_URL}/workers/${workerId}/pay`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) throw new Error("Failed to add payment");
   return res.json();
 };
 
-export const editPayment = async (workerId, index, data) => {
+export const editPayment = async (workerId, paymentId, data) => {
   const res = await fetch(
-    `${BASE_URL}/workers/${workerId}/pay/${index}`,
+    `${BASE_URL}/workers/${workerId}/pay/${paymentId}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) throw new Error("Failed to edit payment");
   return res.json();
 };
 
-export const deletePayment = async (workerId, index) => {
+export const deletePayment = async (workerId, paymentId) => {
   const res = await fetch(
-    `${BASE_URL}/workers/${workerId}/pay/${index}`,
-    { method: "DELETE" }
+    `${BASE_URL}/workers/${workerId}/pay/${paymentId}`,
+    {
+      method: "DELETE",
+    }
   );
+
+  if (!res.ok) throw new Error("Failed to delete payment");
   return res.json();
 };
