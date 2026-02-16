@@ -37,14 +37,13 @@ router.get("/:workerId", async (req, res) => {
 });
 // GET ATTENDANCE BY DATE (USER-SPECIFIC)
 router.get("/", async (req, res) => {
-  const { date, userId } = req.query;
-
-  const records = await Attendance.find({ date, userId }).populate(
-    "workerId",
-    "name"
-  );
-
-  res.json(records);
+  try {
+    const records = await Attendance.find().populate("workerId", "name");
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching attendance" });
+  }
 });
+
 
 module.exports = router;
