@@ -1,3 +1,5 @@
+require("dotenv").config();   // 👈 ADD THIS AT TOP
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -19,9 +21,10 @@ app.get("/", (req, res) => {
   res.send("Backend running");
 });
 
+// 🔥 CONNECT TO ATLAS INSTEAD OF LOCAL
 mongoose
-  .connect("mongodb://127.0.0.1:27017/dailywage")
-  .then(() => console.log("MongoDB connected"))
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected to Atlas"))
   .catch((err) => console.log(err));
 
 app.listen(5000, () => {
