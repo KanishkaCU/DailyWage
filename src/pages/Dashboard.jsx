@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWorkers } from "../services/api";
+import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 
 function Dashboard() {
@@ -17,37 +18,10 @@ function Dashboard() {
     year: "numeric",
   });
 
-  const handleLogout = () => {
-    localStorage.clear(); // if you store login later
-    navigate("/");
-  };
-
   return (
     <div className="layout">
       {/* Sidebar */}
-      <aside className="sidebar">
-        {/* Profile */}
-        <div className="profile">
-          <div className="avatar">👤</div>
-          <div>
-            <p className="profile-name">Admin</p>
-            <p className="profile-role">Owner</p>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="menu">
-          <p className="active">Dashboard</p>
-          <p onClick={() => navigate("/add-worker")}>Add Worker</p>
-          <p onClick={() => navigate("/attendance")}>Attendance</p>
-          <p onClick={() => navigate("/reports")}>Reports</p>
-        </nav>
-
-        {/* Logout */}
-        <div className="logout" onClick={handleLogout}>
-          🚪 Logout
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* Main */}
       <main className="main">

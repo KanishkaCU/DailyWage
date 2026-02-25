@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { addWorker } from "../services/api";
-import "../styles/dashboard.css";
+import Sidebar from "../components/Sidebar";
+import "../styles/dashboard.css"; 
 
 function AddWorker() {
   const [name, setName] = useState("");
@@ -24,6 +25,11 @@ function AddWorker() {
   };
 
   return (
+        <div className="layout">
+      {/* Sidebar */}
+      <Sidebar />
+
+
     <div className="dashboard-container">
       {/* HEADER – UNCHANGED */}
       <div className="dashboard-header">
@@ -73,6 +79,7 @@ function AddWorker() {
         </button>
       </div>
     </div>
+  </div>
   );
 }
 

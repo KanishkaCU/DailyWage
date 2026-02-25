@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAttendance } from "../services/api";
+import Sidebar from "../components/Sidebar";
+import "../styles/dashboard.css"; 
+
 
 function Reports() {
   const today = new Date().toISOString().split("T")[0];
@@ -23,6 +26,9 @@ function Reports() {
 
 
   return (
+     <div className="layout">
+      {/* Sidebar */}
+      <Sidebar />
     <div style={{ padding: "20px" }}>
 
       <h1>Reports</h1>
@@ -83,6 +89,7 @@ function Reports() {
       >
         ← Back
       </button>
+    </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-require("dotenv").config();   // 👈 ADD THIS AT TOP
+require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -21,14 +21,19 @@ app.get("/", (req, res) => {
   res.send("Backend running");
 });
 
-// 🔥 CONNECT TO ATLAS INSTEAD OF LOCAL
+const PORT = process.env.PORT || 5000;
+
+// 🔥 Connect to MongoDB Atlas first
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected to Atlas"))
-  .catch((err) => console.log(err));
-  console.log(process.env.MONGO_URI);
+  .then(() => {
+    console.log("MongoDB connected to Atlas");
 
-
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
+    // Start server only after DB connects
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });

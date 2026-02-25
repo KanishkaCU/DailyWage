@@ -8,10 +8,11 @@ function Login() {
 
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState(""); // ✅ NEW
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const passwordRegex =
     /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
@@ -42,8 +43,9 @@ function Login() {
     }
 
     try {
+      setLoading(true);
+
       if (isSignup) {
-        // ✅ SIGN UP WITH EMAIL
         await signupUser({ username, email, password });
 
         alert("Signup successful! Please login.");
@@ -53,7 +55,6 @@ function Login() {
         setPassword("");
         setConfirmPassword("");
       } else {
-        // ✅ LOGIN
         const res = await loginUser({ username, password });
 
         localStorage.setItem("userId", res.userId);
@@ -62,7 +63,14 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      // 🔥 Show backend error message properly
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,7 +89,6 @@ function Login() {
           onChange={(e) => setUsername(e.target.value)}
         />
 
-        {/* ✅ EMAIL ONLY FOR SIGNUP */}
         {isSignup && (
           <input
             type="email"
@@ -111,8 +118,8 @@ function Login() {
           <p style={{ color: "red", fontSize: "14px" }}>{error}</p>
         )}
 
-        <button onClick={handleSubmit}>
-          {isSignup ? "Sign Up" : "Login"}
+        <button onClick={handleSubmit} disabled={loading}>
+          {loading ? "Please wait..." : isSignup ? "Sign Up" : "Login"}
         </button>
 
         <p
