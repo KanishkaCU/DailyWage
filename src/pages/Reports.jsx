@@ -14,6 +14,7 @@ function Reports() {
     getAttendance().then(setRecords);
   }, []);
 
+  
   // Filter by selected date
   const filteredRecords = records.filter(
     (r) => r.date === selectedDate
