@@ -1,4 +1,4 @@
-const BASE_URL = "https://dailywage-1.onrender.com";
+const BASE_URL = "https://dailywage-1.onrender.com/api";
 
 /* ================= AUTH ================= */
 
