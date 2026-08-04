@@ -10,7 +10,7 @@ import {
   deletePayment,
 } from "../services/api";
 
-import "../styles/workerDetails.css";
+import "../styles/WorkerDetails";
 
 function WorkerDetails() {
   const { id } = useParams();
