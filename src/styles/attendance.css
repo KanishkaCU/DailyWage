@@ -1,489 +1,1000 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Variables ── */
-:root {
-  --bg:           #f0f4ff;
-  --bg-2:         #ffffff;
-  --bg-3:         #f7f9fc;
-  --border:       #e2e8f0;
-  --border-bright:#c7d2e8;
-  --text:         #1e3a5f;
-  --text-muted:   #5a7a9e;
-  --text-dim:     #9ab0c8;
-  --amber:        #e07b00;
-  --amber-light:  #fff7ed;
-  --amber-mid:    #fed7aa;
-  --amber-glow:   rgba(224, 123, 0, 0.1);
-  --green:        #16a34a;
-  --green-light:  #f0fdf4;
-  --green-mid:    #bbf7d0;
-  --green-glow:   rgba(22, 163, 74, 0.1);
-  --red:          #dc2626;
-  --red-light:    #fef2f2;
-  --red-mid:      #fecaca;
-  --red-glow:     rgba(220, 38, 38, 0.1);
-  --blue:         #2563eb;
-  --blue-light:   #eff6ff;
-  --radius:       12px;
-  --font:         'Syne', sans-serif;
-  --mono:         'DM Mono', monospace;
-  --shadow-sm:    0 1px 4px rgba(30, 58, 95, 0.07), 0 1px 2px rgba(30, 58, 95, 0.05);
-  --shadow-md:    0 4px 16px rgba(30, 58, 95, 0.09);
+/* =====================================================
+   DAILY WAGE
+   ATTENDANCE PAGE
+   GREEN & CREAM THEME
+====================================================== */
+
+:root{
+
+--bg:#F7F8F3;
+--bg2:#FFFFFF;
+--bg3:#F3F7F0;
+
+--primary:#8FAF84;
+--primary-dark:#6F8C67;
+--primary-light:#DCE9D5;
+
+--success:#6FA85F;
+--success-light:#EDF7EA;
+
+--danger:#D86A6A;
+--danger-light:#FCECEC;
+
+--warning:#D6A14C;
+--warning-light:#FFF7E8;
+
+--text:#314235;
+--text-light:#7B8D79;
+--text-dim:#A1ADA0;
+
+--border:#D9E5D3;
+
+--shadow:
+0 10px 30px rgba(70,90,65,.08);
+
+--shadow-hover:
+0 18px 45px rgba(70,90,65,.12);
+
+--radius:22px;
+
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*{
 
-body {
-  background: var(--bg);
-  font-family: var(--font);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
+margin:0;
+padding:0;
+box-sizing:border-box;
+
 }
 
-/* ── Layout ── */
-.att-layout {
-  display: flex;
-  min-height: 100vh;
-  background: var(--bg);
+body{
+
+font-family:'Poppins',sans-serif;
+background:var(--bg);
+color:var(--text);
+
 }
 
-.att-main {
-  flex: 1;
-  padding: 2rem 2.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  overflow-y: auto;
+/* ================================================= */
+
+.att-layout{
+
+display:flex;
+min-height:100vh;
+background:var(--bg);
+
 }
 
-/* ── Top Bar ── */
-.att-topbar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
+/* ================================================= */
+
+.att-main{
+
+flex:1;
+padding:35px;
+display:flex;
+flex-direction:column;
+gap:28px;
+
 }
 
-.att-topbar-left { display: flex; flex-direction: column; gap: 0.2rem; }
+/* ================================================= */
 
-.att-eyebrow {
-  font-family: var(--mono);
-  font-size: 0.63rem;
-  letter-spacing: 0.15em;
-  color: var(--text-dim);
-  text-transform: uppercase;
+.att-topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+flex-wrap:wrap;
+gap:20px;
+
 }
 
-.att-title {
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--text);
+/* ================================================= */
+
+.att-topbar-left{
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
 }
 
-.att-title-accent { color: var(--amber); }
+.att-eyebrow{
 
-.att-date {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
+font-size:13px;
+letter-spacing:3px;
+font-weight:600;
+color:var(--primary);
+text-transform:uppercase;
+
 }
 
-.att-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+.att-title{
+
+font-size:52px;
+font-weight:700;
+line-height:1;
+
+color:var(--text);
+
 }
 
-/* Stat Pills */
-.att-stat-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.9rem;
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  box-shadow: var(--shadow-sm);
+.att-title-accent{
+
+color:var(--primary-dark);
+
 }
 
-.att-stat-pill--green {
-  background: var(--green-light);
-  border-color: var(--green-mid);
-  color: var(--green);
+.att-date{
+
+font-size:15px;
+color:var(--text-light);
+
 }
 
-.att-stat-pill--red {
-  background: var(--red-light);
-  border-color: var(--red-mid);
-  color: var(--red);
+/* ================================================= */
+
+.att-topbar-right{
+
+display:flex;
+gap:14px;
+flex-wrap:wrap;
+
 }
 
-.att-stat-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s ease-in-out infinite;
+/* ================================================= */
+
+.att-stat-pill{
+
+padding:12px 22px;
+
+border-radius:40px;
+
+background:white;
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+font-size:14px;
+
+font-weight:600;
+
+box-shadow:var(--shadow);
+
 }
 
-.att-stat-dot--red { background: var(--red); animation: none; }
+.att-stat-pill--green{
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+background:#EDF7EA;
+
+color:#4F7A45;
+
 }
 
-/* ── Progress Bar ── */
-.att-progress-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.9rem 1.25rem;
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+.att-stat-pill--red{
+
+background:#FCECEC;
+
+color:#C95C5C;
+
 }
 
-.att-progress-track {
-  flex: 1;
-  height: 6px;
-  background: var(--bg-3);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid var(--border);
+/* ================================================= */
+
+.att-stat-dot{
+
+width:9px;
+height:9px;
+border-radius:50%;
+background:var(--success);
+
+animation:pulse 2s infinite;
+
 }
 
-.att-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--amber), #fbbf24);
-  border-radius: 6px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.att-stat-dot--red{
+
+background:var(--danger);
+
+animation:none;
+
 }
 
-.att-progress-label {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  min-width: 72px;
-  text-align: right;
+@keyframes pulse{
+
+0%{
+
+transform:scale(.8);
+
+opacity:.6;
+
 }
 
-/* ── Global Message ── */
-.att-message {
-  padding: 0.75rem 1.1rem;
-  border-radius: 9px;
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  animation: fadeIn 0.2s ease;
+50%{
+
+transform:scale(1.2);
+
+opacity:1;
+
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: none; }
+100%{
+
+transform:scale(.8);
+
+opacity:.6;
+
 }
 
-.att-message--success { background: var(--green-light); border: 1px solid var(--green-mid); color: var(--green); }
-.att-message--warn    { background: var(--amber-light); border: 1px solid var(--amber-mid); color: var(--amber); }
-.att-message--error   { background: var(--red-light);   border: 1px solid var(--red-mid);   color: var(--red);   }
-
-/* ── Empty State ── */
-.att-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 4rem 2rem;
-  color: var(--text-dim);
 }
 
-.att-empty-icon { font-size: 2.5rem; }
-.att-empty p { font-size: 0.875rem; }
+/* ================================================= */
 
-/* ── Worker Grid ── */
-.att-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
+.att-progress-wrap{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+background:white;
+
+padding:18px 24px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
 }
 
-/* ── Worker Card ── */
-.att-card {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
-  box-shadow: var(--shadow-sm);
-  animation: cardIn 0.35s ease both;
+.att-progress-track{
+
+flex:1;
+
+height:10px;
+
+background:#EEF5EA;
+
+border-radius:20px;
+
+overflow:hidden;
+
 }
 
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: none; }
+.att-progress-fill{
+
+height:100%;
+
+background:linear-gradient(
+90deg,
+#8FAF84,
+#6FA85F
+);
+
+border-radius:20px;
+
+transition:.5s;
+
 }
 
-.att-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+.att-progress-label{
+
+font-size:14px;
+
+font-weight:600;
+
+color:#6F8C67;
+
 }
 
-.att-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--border);
-  transition: background 0.2s;
-  border-radius: 3px 3px 0 0;
+/* ================================================= */
+
+.att-message{
+
+padding:16px 20px;
+
+border-radius:16px;
+
+font-size:14px;
+
+font-weight:600;
+
 }
 
-.att-card--present { border-color: var(--green-mid); }
-.att-card--present::before { background: var(--green); }
+.att-message--success{
 
-.att-card--absent  { border-color: var(--red-mid); }
-.att-card--absent::before  { background: var(--red); }
+background:#EDF7EA;
 
-.att-card--saved   { border-color: var(--amber-mid); }
-.att-card--saved::before   { background: var(--amber); }
+color:#4F7A45;
 
-/* Card Header */
-.att-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
 
-.att-avatar {
-  width: 42px; height: 42px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f97316, #fbbf24);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(249, 115, 22, 0.25);
+.att-message--warn{
+
+background:#FFF6E8;
+
+color:#B8842E;
+
 }
 
-.att-worker-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  overflow: hidden;
+.att-message--error{
+
+background:#FCECEC;
+
+color:#C95C5C;
+
+}
+/* =====================================================
+   EMPTY STATE
+====================================================== */
+
+.att-empty{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:70px 20px;
+gap:15px;
+
+background:white;
+
+border-radius:24px;
+
+box-shadow:var(--shadow);
+
 }
 
-.att-worker-name {
-  font-size: 0.925rem;
-  font-weight: 700;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.att-empty-icon{
+
+font-size:55px;
+
 }
 
-.att-worker-phone {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--text-muted);
+.att-empty p{
+
+font-size:16px;
+
+color:var(--text-light);
+
 }
 
-/* Badges */
-.att-saved-badge {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  padding: 0.2rem 0.6rem;
-  background: var(--amber-light);
-  border: 1px solid var(--amber-mid);
-  color: var(--amber);
-  border-radius: 20px;
-  flex-shrink: 0;
-  font-weight: 600;
+/* =====================================================
+   WORKER GRID
+====================================================== */
+
+.att-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fill,minmax(340px,1fr));
+
+gap:24px;
+
 }
 
-.att-pending-badge {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  padding: 0.2rem 0.6rem;
-  background: var(--bg-3);
-  border: 1px solid var(--border-bright);
-  color: var(--text-dim);
-  border-radius: 20px;
-  flex-shrink: 0;
+/* =====================================================
+   CARD
+====================================================== */
+
+.att-card{
+
+background:white;
+
+border-radius:24px;
+
+padding:24px;
+
+box-shadow:var(--shadow);
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+transition:.35s;
+
+border:1px solid transparent;
+
+position:relative;
+
+overflow:hidden;
+
 }
 
-/* Toggle Group */
-.att-toggle-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+.att-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:var(--shadow-hover);
+
 }
 
-.att-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-family: var(--font);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s ease;
+/* ---------------------------- */
+
+.att-card::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:5px;
+
+background:#DCE9D5;
+
 }
 
-.att-toggle:hover { border-color: var(--border-bright); color: var(--text); }
+/* ---------------------------- */
 
-.att-toggle--present.active {
-  background: var(--green-light);
-  border-color: var(--green-mid);
-  color: var(--green);
+.att-card--present{
+
+border-color:#B9D8AF;
+
 }
 
-.att-toggle--absent.active {
-  background: var(--red-light);
-  border-color: var(--red-mid);
-  color: var(--red);
+.att-card--present::before{
+
+background:#6FA85F;
+
 }
 
-/* Wage Input */
-.att-wage-row { display: flex; }
+/* ---------------------------- */
 
-.att-wage-input-wrap {
-  display: flex;
-  align-items: center;
-  background: var(--bg-2);
-  border: 1px solid var(--border-bright);
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.att-card--absent{
+
+border-color:#F3C7C7;
+
 }
 
-.att-wage-input-wrap:focus-within {
-  border-color: var(--amber);
-  box-shadow: 0 0 0 3px var(--amber-glow);
+.att-card--absent::before{
+
+background:#D86A6A;
+
 }
 
-.att-wage-prefix {
-  padding: 0 0.85rem;
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  color: var(--amber);
-  font-weight: 700;
-  background: var(--amber-light);
-  border-right: 1px solid var(--amber-mid);
-  display: flex;
-  align-items: center;
-  align-self: stretch;
+/* ---------------------------- */
+
+.att-card--saved{
+
+border-color:#C8DEC0;
+
 }
 
-.att-wage-input {
-  flex: 1;
-  padding: 0.65rem 0.85rem;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.9rem;
+/* =====================================================
+   CARD HEADER
+====================================================== */
+
+.att-card-header{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
 }
 
-.att-wage-input::placeholder { color: var(--text-dim); }
+/* ---------------------------- */
 
-/* Save Button */
-.att-save-btn {
-  width: 100%;
-  padding: 0.72rem;
-  background: var(--blue);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-family: var(--font);
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+.att-avatar{
+
+width:55px;
+
+height:55px;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+#9CC28E,
+#7F9D76
+);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:white;
+
+font-size:20px;
+
+font-weight:700;
+
 }
 
-.att-save-btn:hover:not(:disabled) {
-  background: #1d4ed8;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-  transform: translateY(-1px);
+/* ---------------------------- */
+
+.att-worker-info{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+gap:5px;
+
 }
 
-.att-save-btn--done {
-  background: var(--green-light) !important;
-  border: 1px solid var(--green-mid) !important;
-  color: var(--green) !important;
-  box-shadow: none !important;
-  transform: none !important;
-  cursor: default;
+.att-worker-name{
+
+font-size:17px;
+
+font-weight:700;
+
+color:var(--text);
+
 }
 
-.att-save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.att-worker-phone{
 
-/* Spinner */
-.att-spinner {
-  width: 15px; height: 15px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+font-size:14px;
+
+color:var(--text-light);
+
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+/* =====================================================
+   BADGES
+====================================================== */
 
-/* Back Button */
-.att-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: fit-content;
-  padding: 0.55rem 1.1rem;
-  background: var(--bg-2);
-  border: 1px solid var(--border-bright);
-  border-radius: 8px;
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: var(--shadow-sm);
-  margin-top: 0.5rem;
+.att-saved-badge{
+
+padding:8px 15px;
+
+border-radius:30px;
+
+background:#EDF7EA;
+
+color:#4F7A45;
+
+font-size:13px;
+
+font-weight:600;
+
 }
 
-.att-back-btn:hover {
-  border-color: var(--blue);
-  color: var(--blue);
-  background: var(--blue-light);
+.att-pending-badge{
+
+padding:8px 15px;
+
+border-radius:30px;
+
+background:#FFF7E8;
+
+color:#B8842E;
+
+font-size:13px;
+
+font-weight:600;
+
 }
 
-/* ── Responsive ── */
-@media (max-width: 700px) {
-  .att-main { padding: 1.25rem; }
-  .att-topbar { flex-direction: column; }
-  .att-grid { grid-template-columns: 1fr; }
+/* =====================================================
+   TOGGLE BUTTONS
+====================================================== */
+
+.att-toggle-group{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:15px;
+
+}
+
+/* ---------------------------- */
+
+.att-toggle{
+
+height:52px;
+
+border:none;
+
+border-radius:15px;
+
+background:#F5F8F3;
+
+font-size:15px;
+
+font-weight:600;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:8px;
+
+cursor:pointer;
+
+transition:.3s;
+
+color:#647463;
+
+}
+
+/* ---------------------------- */
+
+.att-toggle:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* ---------------------------- */
+
+.att-toggle--present.active{
+
+background:#6FA85F;
+
+color:white;
+
+}
+
+/* ---------------------------- */
+
+.att-toggle--absent.active{
+
+background:#D86A6A;
+
+color:white;
+
+}
+
+/* =====================================================
+   WAGE INPUT
+====================================================== */
+
+.att-wage-row{
+
+display:flex;
+
+}
+
+.att-wage-input-wrap{
+
+display:flex;
+
+align-items:center;
+
+width:100%;
+
+height:56px;
+
+background:#FAFCF8;
+
+border:1px solid var(--border);
+
+border-radius:16px;
+
+overflow:hidden;
+
+transition:.3s;
+
+}
+
+.att-wage-input-wrap:focus-within{
+
+border-color:#8FAF84;
+
+box-shadow:
+0 0 0 4px rgba(143,175,132,.15);
+
+}
+
+.att-wage-prefix{
+
+padding:0 18px;
+
+font-size:18px;
+
+font-weight:700;
+
+color:#6F8C67;
+
+background:#EDF7EA;
+
+height:100%;
+
+display:flex;
+
+align-items:center;
+
+}
+
+.att-wage-input{
+
+flex:1;
+
+height:100%;
+
+border:none;
+
+outline:none;
+
+padding:0 16px;
+
+font-size:15px;
+
+background:transparent;
+
+color:var(--text);
+
+}
+
+.att-wage-input::placeholder{
+
+color:#9AAA98;
+
+}
+/* =====================================================
+   SAVE BUTTON
+====================================================== */
+
+.att-save-btn{
+
+width:100%;
+
+height:55px;
+
+border:none;
+
+border-radius:16px;
+
+background:linear-gradient(
+135deg,
+#8FAF84,
+#6F8C67
+);
+
+color:white;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+transition:.3s;
+
+}
+
+.att-save-btn:hover:not(:disabled){
+
+transform:translateY(-3px);
+
+box-shadow:
+0 15px 30px rgba(111,140,103,.25);
+
+}
+
+.att-save-btn:disabled{
+
+opacity:.6;
+
+cursor:not-allowed;
+
+}
+
+/* ---------------------------- */
+
+.att-save-btn--done{
+
+background:#EDF7EA !important;
+
+color:#4F7A45 !important;
+
+border:1px solid #B9D8AF;
+
+box-shadow:none !important;
+
+}
+
+/* =====================================================
+   SPINNER
+====================================================== */
+
+.att-spinner{
+
+width:18px;
+
+height:18px;
+
+border:2px solid rgba(255,255,255,.4);
+
+border-top:2px solid white;
+
+border-radius:50%;
+
+animation:spin .7s linear infinite;
+
+}
+
+@keyframes spin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* =====================================================
+   DONE BUTTON
+====================================================== */
+
+.att-back-btn{
+
+width:180px;
+
+height:54px;
+
+border:none;
+
+border-radius:16px;
+
+background:white;
+
+color:#5E735B;
+
+font-size:15px;
+
+font-weight:600;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:8px;
+
+cursor:pointer;
+
+box-shadow:var(--shadow);
+
+transition:.3s;
+
+}
+
+.att-back-btn:hover{
+
+background:#EEF6EB;
+
+transform:translateY(-3px);
+
+}
+
+/* =====================================================
+   SCROLLBAR
+====================================================== */
+
+.att-main::-webkit-scrollbar{
+
+width:7px;
+
+}
+
+.att-main::-webkit-scrollbar-thumb{
+
+background:#C8D8C3;
+
+border-radius:20px;
+
+}
+
+.att-main::-webkit-scrollbar-track{
+
+background:#EEF4EA;
+
+}
+
+/* =====================================================
+   RESPONSIVE
+====================================================== */
+
+@media(max-width:1200px){
+
+.att-grid{
+
+grid-template-columns:
+repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:850px){
+
+.att-topbar{
+
+flex-direction:column;
+
+}
+
+.att-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.att-main{
+
+padding:25px;
+
+}
+
+.att-title{
+
+font-size:38px;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.att-stat-pill{
+
+width:100%;
+
+justify-content:center;
+
+}
+
+.att-back-btn{
+
+width:100%;
+
+}
+
+}
+
+/* =====================================================
+   FINAL POLISH
+====================================================== */
+
+::selection{
+
+background:#DCE9D5;
+
+color:#314235;
+
+}
+
+.att-card,
+.att-save-btn,
+.att-toggle,
+.att-back-btn{
+
+transition:all .3s ease;
+
 }
