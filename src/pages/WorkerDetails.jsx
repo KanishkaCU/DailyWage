@@ -57,9 +57,9 @@ function WorkerDetails() {
 
   if (!worker) {
     return (
-      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+      <div className="flex flex-col md:flex-row min-h-screen bg-stone-50">
         <Sidebar />
-        <div className="flex-1 flex items-center justify-center text-gray-400 text-sm py-12">
+        <div className="flex-1 flex items-center justify-center text-stone-400 text-sm py-12">
           Loading...
         </div>
       </div>
@@ -125,28 +125,28 @@ function WorkerDetails() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-stone-50">
       <Sidebar />
 
       <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-4xl mx-auto w-full space-y-6">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-stone-500 hover:text-stone-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {t("back")}
         </button>
 
         {/* Worker Header */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-brand-50 text-brand-600 font-bold flex items-center justify-center text-lg sm:text-xl shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-lg sm:text-xl shrink-0 border border-brand-200">
               {worker.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900">{worker.name}</h1>
-              <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1.5 mt-0.5">
+              <h1 className="text-lg sm:text-xl font-bold text-stone-900">{worker.name}</h1>
+              <p className="text-xs sm:text-sm text-stone-500 flex items-center gap-1.5 mt-0.5">
                 <Phone className="w-3.5 h-3.5" />
                 {worker.phone ? (
                   <a href={`tel:${worker.phone}`} className="hover:underline">
@@ -161,21 +161,21 @@ function WorkerDetails() {
         </div>
 
         {/* Total Salary Given */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
               <IndianRupee className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900">₹{totalSalaryGiven.toLocaleString()}</span>
-              <p className="text-xs text-gray-500">{t("totalSalaryGivenCol")}</p>
+              <span className="text-xl sm:text-2xl font-bold text-stone-900">₹{totalSalaryGiven.toLocaleString()}</span>
+              <p className="text-xs text-stone-500">{t("totalSalaryGivenCol")}</p>
             </div>
           </div>
         </div>
 
         {/* Add Payment */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 space-y-4">
-          <h2 className="text-base font-semibold text-gray-900">{t("recordPayment")}</h2>
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 space-y-4 shadow-xs">
+          <h2 className="text-base font-semibold text-stone-900">{t("recordPayment")}</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <input
@@ -183,18 +183,18 @@ function WorkerDetails() {
               placeholder={t("amountRupees")}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+              className="bg-stone-50 border border-stone-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-stone-900 text-sm rounded-lg px-3 py-2 outline-none"
             />
             <input
               type="text"
               placeholder={t("reason")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+              className="bg-stone-50 border border-stone-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-stone-900 text-sm rounded-lg px-3 py-2 outline-none"
             />
             <button
               onClick={handleAddPayment}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-xs transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t("addPaymentBtn")}
@@ -203,16 +203,16 @@ function WorkerDetails() {
         </div>
 
         {/* Payment History */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 space-y-3">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-900">{t("paymentHistory")}</h2>
-            <span className="text-xs text-gray-400">{(worker.payments || []).length} {t("records")}</span>
+            <h2 className="text-base font-semibold text-stone-900">{t("paymentHistory")}</h2>
+            <span className="text-xs text-stone-400">{(worker.payments || []).length} {t("records")}</span>
           </div>
 
           {(worker.payments || []).length === 0 ? (
-            <div className="py-6 text-center text-gray-400 text-sm">{t("noPayments")}</div>
+            <div className="py-6 text-center text-stone-400 text-sm">{t("noPayments")}</div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-stone-100">
               {(worker.payments || []).map((payment, index) => (
                 <div key={payment._id || index} className="py-3 flex items-center justify-between gap-3">
                   {editingIndex === index ? (
@@ -221,24 +221,24 @@ function WorkerDetails() {
                         type="number"
                         value={editAmount}
                         onChange={(e) => setEditAmount(e.target.value)}
-                        className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg px-3 py-1.5 outline-none w-full sm:w-28"
+                        className="bg-stone-50 border border-stone-200 text-stone-900 text-sm rounded-lg px-3 py-1.5 outline-none w-full sm:w-28"
                       />
                       <input
                         type="text"
                         value={editReason}
                         onChange={(e) => setEditReason(e.target.value)}
-                        className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg px-3 py-1.5 outline-none"
+                        className="flex-1 bg-stone-50 border border-stone-200 text-stone-900 text-sm rounded-lg px-3 py-1.5 outline-none"
                       />
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => handleEditPayment(payment._id)}
-                          className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-medium inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-medium inline-flex items-center gap-1"
                         >
                           <Save className="w-3 h-3" /> Save
                         </button>
                         <button
                           onClick={() => setEditingIndex(null)}
-                          className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-600 text-xs font-medium inline-flex items-center gap-1"
                         >
                           <X className="w-3 h-3" /> Cancel
                         </button>
@@ -247,11 +247,11 @@ function WorkerDetails() {
                   ) : (
                     <>
                       <div>
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="text-sm font-semibold text-stone-900">
                           ₹{payment.amount.toLocaleString()}
                         </span>
-                        <p className="text-xs text-gray-500">{payment.reason}</p>
-                        <span className="text-[11px] text-gray-400">
+                        <p className="text-xs text-stone-500">{payment.reason}</p>
+                        <span className="text-[11px] text-stone-400">
                           {new Date(payment.date).toLocaleDateString("en-IN", {
                             day: "numeric", month: "short", year: "numeric",
                           })}
@@ -265,13 +265,13 @@ function WorkerDetails() {
                             setEditAmount(payment.amount);
                             setEditReason(payment.reason);
                           }}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-400 hover:text-stone-600 transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeletePayment(payment._id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-rose-50 text-stone-400 hover:text-rose-600 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -285,31 +285,31 @@ function WorkerDetails() {
         </div>
 
         {/* Attendance History */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 space-y-3">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-stone-900 flex items-center gap-2">
               <CalendarCheck className="w-4 h-4 text-brand-600" />
               {t("attendanceHistory")}
             </h2>
-            <span className="text-xs text-gray-400">{attendanceRecords.length} days</span>
+            <span className="text-xs text-stone-400">{attendanceRecords.length} days</span>
           </div>
 
           {attendanceRecords.length === 0 ? (
-            <div className="py-6 text-center text-gray-400 text-sm">{t("noAttendanceLogged")}</div>
+            <div className="py-6 text-center text-stone-400 text-sm">{t("noAttendanceLogged")}</div>
           ) : (
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="w-full text-left min-w-[400px]">
                 <thead>
-                  <tr className="border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <tr className="border-b border-stone-100 text-xs font-semibold text-stone-400 uppercase tracking-wider">
                     <th className="py-3 px-4">{t("date")}</th>
                     <th className="py-3 px-4">{t("status")}</th>
                     <th className="py-3 px-4">{t("salary")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50 text-sm">
+                <tbody className="divide-y divide-stone-50 text-sm">
                   {attendanceRecords.map((record) => (
-                    <tr key={record._id} className="hover:bg-gray-50/50">
-                      <td className="py-3 px-4 text-gray-600">
+                    <tr key={record._id} className="hover:bg-stone-50/70">
+                      <td className="py-3 px-4 text-stone-600">
                         {new Date(record.date).toLocaleDateString("en-IN", {
                           weekday: "short", day: "numeric", month: "short", year: "numeric",
                         })}
@@ -318,16 +318,16 @@ function WorkerDetails() {
                         <span
                           className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
                             record.status === "Present"
-                              ? "bg-green-50 text-green-700"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : record.status === "Absent"
-                              ? "bg-red-50 text-red-700"
-                              : "bg-amber-50 text-amber-700"
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : "bg-amber-50 text-amber-700 border border-amber-200"
                           }`}
                         >
                           {getTranslatedStatus(record.status)}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-medium text-gray-900">
+                      <td className="py-3 px-4 font-medium text-stone-900">
                         ₹{record.wage || 0}
                       </td>
                     </tr>

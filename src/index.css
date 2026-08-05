@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased min-h-screen;
+    @apply bg-stone-50 text-stone-900 font-sans antialiased min-h-screen;
   }
 }
 
@@ -16,10 +16,10 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-stone-100;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full hover:bg-gray-400;
+  @apply bg-stone-300 rounded-full hover:bg-stone-400;
 }
 
 /* Print */

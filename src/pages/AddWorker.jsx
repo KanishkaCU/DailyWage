@@ -79,45 +79,45 @@ function AddWorker() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-stone-50">
       <Sidebar />
 
       <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("addWorker")}</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">{t("addWorkerSubtitle")}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-stone-900">{t("addWorker")}</h1>
+          <p className="text-xs sm:text-sm text-stone-500 mt-0.5">{t("addWorkerSubtitle")}</p>
         </div>
 
         {/* Form */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 space-y-4">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-6 space-y-4 shadow-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("workerNameLabel")}</label>
+              <label className="block text-xs font-medium text-stone-500 mb-1.5">{t("workerNameLabel")}</label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input
                   type="text"
                   placeholder="e.g. Ramesh Kumar"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg pl-10 pr-4 py-2.5 outline-none"
+                  className="w-full bg-stone-50 border border-stone-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-stone-900 text-sm rounded-lg pl-10 pr-4 py-2.5 outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("phoneNumberLabel")}</label>
+              <label className="block text-xs font-medium text-stone-500 mb-1.5">{t("phoneNumberLabel")}</label>
               <div className="relative">
-                <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input
                   type="tel"
                   placeholder="10-digit mobile number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg pl-10 pr-4 py-2.5 outline-none"
+                  className="w-full bg-stone-50 border border-stone-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-stone-900 text-sm rounded-lg pl-10 pr-4 py-2.5 outline-none"
                 />
               </div>
             </div>
@@ -126,7 +126,7 @@ function AddWorker() {
           <button
             onClick={handleSubmit}
             disabled={adding}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-xs transition-colors"
           >
             {adding ? (
               t("adding")
@@ -142,10 +142,10 @@ function AddWorker() {
             <div
               className={`px-4 py-3 rounded-lg border text-xs sm:text-sm font-medium flex items-center gap-2 ${
                 message.type === "success"
-                  ? "bg-green-50 text-green-700 border-green-200"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                   : message.type === "warn"
-                  ? "bg-amber-50 text-amber-700 border-amber-200"
-                  : "bg-red-50 text-red-700 border-red-200"
+                  ? "bg-amber-50 text-amber-800 border-amber-200"
+                  : "bg-rose-50 text-rose-800 border-rose-200"
               }`}
             >
               {message.type === "success" ? (
@@ -159,44 +159,44 @@ function AddWorker() {
         </div>
 
         {/* Worker List */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-900">{t("allWorkers")}</h2>
-            <span className="text-xs font-medium text-gray-400">{workers.length} {t("total")}</span>
+            <h2 className="text-base font-semibold text-stone-900">{t("allWorkers")}</h2>
+            <span className="text-xs font-medium text-stone-400">{workers.length} {t("total")}</span>
           </div>
 
           {loading ? (
-            <div className="py-8 text-center text-gray-400 text-sm">Loading...</div>
+            <div className="py-8 text-center text-stone-400 text-sm">Loading...</div>
           ) : workers.length === 0 ? (
-            <div className="py-8 text-center text-gray-400 text-sm">{t("noWorkersFound")}</div>
+            <div className="py-8 text-center text-stone-400 text-sm">{t("noWorkersFound")}</div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-stone-100">
               {workers.map((worker) => (
                 <div
                   key={worker._id}
                   className="flex items-center justify-between py-3 px-1"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-50 text-brand-600 font-semibold flex items-center justify-center text-sm shrink-0">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-100 text-brand-800 font-semibold flex items-center justify-center text-sm shrink-0 border border-brand-200">
                       {worker.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{worker.name}</p>
-                      <p className="text-xs text-gray-400">{worker.phone || "—"}</p>
+                      <p className="text-sm font-medium text-stone-900 truncate">{worker.name}</p>
+                      <p className="text-xs text-stone-400">{worker.phone || "—"}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => navigate(`/worker/${worker._id}`)}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-400 hover:text-stone-600 transition-colors"
                       title="View Details"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(worker._id, worker.name)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-rose-50 text-stone-400 hover:text-rose-600 transition-colors"
                       title="Delete Worker"
                     >
                       <Trash2 className="w-4 h-4" />

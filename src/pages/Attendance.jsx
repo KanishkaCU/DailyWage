@@ -147,22 +147,22 @@ function Attendance() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-stone-50">
       <Sidebar />
 
       <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("attendanceTitle")}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-stone-900">{t("attendanceTitle")}</h1>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1.5">
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-white border border-gray-200 text-gray-900 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                className="bg-white border border-stone-200 text-stone-900 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
               />
-              <span className="text-xs sm:text-sm text-gray-500">
+              <span className="text-xs sm:text-sm text-stone-500">
                 {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", {
                   weekday: "long", day: "numeric", month: "long", year: "numeric",
                 })}
@@ -173,7 +173,7 @@ function Attendance() {
           {workers.length > 0 && (
             <button
               onClick={saveAllAttendance}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs sm:text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs sm:text-sm shadow-xs transition-colors"
             >
               <Save className="w-4 h-4" />
               <span>{t("saveAll")}</span>
@@ -183,7 +183,7 @@ function Attendance() {
 
         {/* Info banner for today */}
         {isToday && (
-          <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 text-xs sm:text-sm text-blue-700">
+          <div className="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-xs sm:text-sm text-brand-900">
             {t("workersMovedMsg")}
           </div>
         )}
@@ -193,10 +193,10 @@ function Attendance() {
           <div
             className={`px-4 py-3 rounded-lg border text-xs sm:text-sm font-medium flex items-center gap-2 ${
               message.type === "success"
-                ? "bg-green-50 text-green-700 border-green-200"
+                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                 : message.type === "warn"
-                ? "bg-amber-50 text-amber-700 border-amber-200"
-                : "bg-red-50 text-red-700 border-red-200"
+                ? "bg-amber-50 text-amber-800 border-amber-200"
+                : "bg-rose-50 text-rose-800 border-rose-200"
             }`}
           >
             {message.type === "success" && <Check className="w-4 h-4 shrink-0" />}
@@ -208,9 +208,9 @@ function Attendance() {
 
         {/* Worker Cards */}
         {loading ? (
-          <div className="py-16 text-center text-gray-400 text-sm">Loading...</div>
+          <div className="py-16 text-center text-stone-400 text-sm">Loading...</div>
         ) : workers.length === 0 ? (
-          <div className="py-16 text-center text-gray-400 text-sm">
+          <div className="py-16 text-center text-stone-400 text-sm">
             {isToday ? t("allMarkedMsg") : t("noWorkersDateMsg")}
           </div>
         ) : (
@@ -224,30 +224,30 @@ function Attendance() {
               return (
                 <div
                   key={worker._id}
-                  className={`bg-white border rounded-xl p-4 sm:p-5 space-y-4 transition-all ${
+                  className={`bg-white border rounded-xl p-4 sm:p-5 space-y-4 shadow-xs transition-all ${
                     status === "Present"
-                      ? "border-green-200 bg-green-50/30"
+                      ? "border-emerald-300 bg-emerald-50/20"
                       : status === "Absent"
-                      ? "border-red-200 bg-red-50/30"
+                      ? "border-rose-300 bg-rose-50/20"
                       : status === "Half Day"
-                      ? "border-amber-200 bg-amber-50/30"
-                      : "border-gray-200"
+                      ? "border-amber-300 bg-amber-50/20"
+                      : "border-stone-200"
                   }`}
                 >
                   {/* Worker Info */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-brand-50 text-brand-600 font-bold flex items-center justify-center text-sm">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-sm border border-brand-200">
                         {worker.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{worker.name}</h3>
-                        <p className="text-xs text-gray-400">{worker.phone || "—"}</p>
+                        <h3 className="font-semibold text-stone-900 text-sm sm:text-base">{worker.name}</h3>
+                        <p className="text-xs text-stone-400">{worker.phone || "—"}</p>
                       </div>
                     </div>
 
                     {isSaved && (
-                      <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-green-50 text-green-600">
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                         ✓ {t("saved")}
                       </span>
                     )}
@@ -259,8 +259,8 @@ function Attendance() {
                       onClick={() => handleStatusChange(worker._id, "Present")}
                       className={`py-2 rounded-lg text-xs font-medium border transition-all flex items-center justify-center gap-1 ${
                         status === "Present"
-                          ? "bg-green-600 text-white border-green-600"
-                          : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                          ? "bg-emerald-600 text-white border-emerald-600"
+                          : "bg-white text-stone-600 border-stone-200 hover:bg-stone-50"
                       }`}
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -270,8 +270,8 @@ function Attendance() {
                       onClick={() => handleStatusChange(worker._id, "Half Day")}
                       className={`py-2 rounded-lg text-xs font-medium border transition-all flex items-center justify-center gap-1 ${
                         status === "Half Day"
-                          ? "bg-amber-500 text-white border-amber-500"
-                          : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                          ? "bg-amber-600 text-white border-amber-600"
+                          : "bg-white text-stone-600 border-stone-200 hover:bg-stone-50"
                       }`}
                     >
                       <Clock className="w-3.5 h-3.5" />
@@ -281,8 +281,8 @@ function Attendance() {
                       onClick={() => handleStatusChange(worker._id, "Absent")}
                       className={`py-2 rounded-lg text-xs font-medium border transition-all flex items-center justify-center gap-1 ${
                         status === "Absent"
-                          ? "bg-red-500 text-white border-red-500"
-                          : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                          ? "bg-rose-600 text-white border-rose-600"
+                          : "bg-white text-stone-600 border-stone-200 hover:bg-stone-50"
                       }`}
                     >
                       <XCircle className="w-3.5 h-3.5" />
@@ -293,7 +293,7 @@ function Attendance() {
                   {/* Wage Input */}
                   {(status === "Present" || status === "Half Day") && (
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-stone-500 mb-1">
                         {t("salaryAmount")}
                       </label>
                       <input
@@ -301,7 +301,7 @@ function Attendance() {
                         placeholder={t("enterAmount")}
                         value={entry?.wage || ""}
                         onChange={(e) => handleWageChange(worker._id, e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+                        className="w-full bg-stone-50 border border-stone-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-stone-900 text-sm rounded-lg px-3 py-2 outline-none"
                       />
                     </div>
                   )}
@@ -313,7 +313,7 @@ function Attendance() {
                       disabled={isSaving || isSaved}
                       className={`w-full py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                         isSaved
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          ? "bg-stone-100 text-stone-400 cursor-not-allowed"
                           : "bg-brand-600 hover:bg-brand-700 text-white"
                       }`}
                     >
@@ -321,7 +321,7 @@ function Attendance() {
                         t("saving")
                       ) : isSaved ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-green-500" />
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
                           {t("saved")}
                         </>
                       ) : (
