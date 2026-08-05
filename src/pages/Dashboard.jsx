@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWorkers, getAttendance, deleteWorker } from "../services/api";
 import Sidebar from "../components/Sidebar";
+import { useLanguage } from "../context/LanguageContext";
 import {
   Users,
   CalendarCheck,
@@ -21,6 +22,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username") || "Admin";
@@ -70,89 +72,96 @@ function Dashboard() {
       (w.phone && w.phone.includes(searchQuery))
   );
 
+  const getTranslatedStatus = (status) => {
+    if (status === "Present") return t("present");
+    if (status === "Absent") return t("absent");
+    if (status === "Half Day") return t("halfDay");
+    return t("notMarked");
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       <Sidebar />
 
-      <main className="flex-1 p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome, {username}</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("welcome")}, {username}</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
               {new Date().toLocaleDateString("en-IN", {
                 weekday: "long", day: "numeric", month: "long", year: "numeric",
               })}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => navigate("/add-worker")}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs sm:text-sm transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Worker</span>
+              <span>{t("addWorker")}</span>
             </button>
             <button
               onClick={() => navigate("/attendance")}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-xs sm:text-sm transition-colors"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Log Attendance</span>
+              <span>{t("logAttendanceBtn")}</span>
             </button>
           </div>
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <Users className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-gray-900">{totalWorkers}</span>
-                <p className="text-xs text-gray-500">Total Workers</p>
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">{totalWorkers}</span>
+                <p className="text-xs text-gray-500">{t("totalWorkers")}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0">
                 <CalendarCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-gray-900">{presentTodayCount}</span>
-                <p className="text-xs text-gray-500">Present Today</p>
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">{presentTodayCount}</span>
+                <p className="text-xs text-gray-500">{t("presentToday")}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                 <IndianRupee className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-gray-900">₹{totalSalaryGiven.toLocaleString()}</span>
-                <p className="text-xs text-gray-500">Today's Salary Given</p>
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">₹{totalSalaryGiven.toLocaleString()}</span>
+                <p className="text-xs text-gray-500">{t("todaysSalaryGiven")}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Worker Table */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        {/* Worker Table Card */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-            <h2 className="text-base font-semibold text-gray-900">Workers</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t("workers")}</h2>
 
             <div className="relative w-full sm:w-64">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name or phone..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg pl-9 pr-4 py-2 outline-none transition-colors"
@@ -164,18 +173,18 @@ function Dashboard() {
             <div className="py-12 text-center text-gray-400 text-sm">Loading...</div>
           ) : filteredWorkers.length === 0 ? (
             <div className="py-12 text-center text-gray-400 text-sm">
-              No workers found. Click "Add Worker" to get started.
+              {t("noWorkersFound")}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full text-left min-w-[500px]">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     <th className="py-3 px-4">#</th>
-                    <th className="py-3 px-4">Name</th>
-                    <th className="py-3 px-4">Phone</th>
-                    <th className="py-3 px-4">Today</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-4">{t("name")}</th>
+                    <th className="py-3 px-4">{t("phone")}</th>
+                    <th className="py-3 px-4">{t("today")}</th>
+                    <th className="py-3 px-4 text-right">{t("actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 text-sm">
@@ -209,16 +218,16 @@ function Dashboard() {
                             {status === "Present" && <CheckCircle2 className="w-3 h-3" />}
                             {status === "Absent" && <XCircle className="w-3 h-3" />}
                             {status === "Half Day" && <Clock className="w-3 h-3" />}
-                            {status}
+                            {getTranslatedStatus(status)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => navigate(`/worker/${w._id}`)}
-                              className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium inline-flex items-center gap-1 transition-colors"
+                              className="px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium inline-flex items-center gap-1 transition-colors"
                             >
-                              Details
+                              {t("details")}
                               <ChevronRight className="w-3 h-3" />
                             </button>
                             <button

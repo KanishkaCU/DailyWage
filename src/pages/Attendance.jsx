@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { getWorkers, markAttendance, getAttendance } from "../services/api";
 import Sidebar from "../components/Sidebar";
+import { useLanguage } from "../context/LanguageContext";
 import {
-  CalendarCheck,
   Save,
   CheckCircle2,
   XCircle,
@@ -14,6 +14,7 @@ import {
 function Attendance() {
   const getTodayString = () => new Date().toISOString().split("T")[0];
 
+  const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [workers, setWorkers] = useState([]);
   const [attendanceData, setAttendanceData] = useState({});
@@ -48,14 +49,15 @@ function Attendance() {
         }
       });
 
-      // Filter: If today, hide workers already marked present/half day (saved to DB)
       let filteredWorkers = workerList || [];
       if (isToday) {
         filteredWorkers = filteredWorkers.filter((w) => {
           const existingRecord = initialMap[w._id];
-          // Show if no record yet, or if record exists but not saved yet (shouldn't happen on load)
-          // Hide if already saved as Present or Half Day
-          if (existingRecord && savedMap[w._id] && (existingRecord.status === "Present" || existingRecord.status === "Half Day")) {
+          if (
+            existingRecord &&
+            savedMap[w._id] &&
+            (existingRecord.status === "Present" || existingRecord.status === "Half Day")
+          ) {
             return false;
           }
           return true;
@@ -96,7 +98,7 @@ function Attendance() {
       (data.status === "Present" || data.status === "Half Day") &&
       (!data.wage || Number(data.wage) <= 0)
     ) {
-      showMessage("Please enter the salary amount before saving", "warn");
+      showMessage(t("enterSalaryWarn"), "warn");
       return;
     }
 
@@ -110,9 +112,8 @@ function Attendance() {
         wage: data.status === "Absent" ? 0 : Number(data.wage),
       });
       setSaved((p) => ({ ...p, [workerId]: true }));
-      showMessage("Attendance saved successfully", "success");
+      showMessage(t("attendanceSaved"), "success");
 
-      // If today and marked present/half day, remove worker from list after a short delay
       if (isToday && (data.status === "Present" || data.status === "Half Day")) {
         setTimeout(() => {
           setWorkers((prev) => prev.filter((w) => w._id !== workerId));
@@ -131,7 +132,7 @@ function Attendance() {
     );
 
     if (workerIds.length === 0) {
-      showMessage("No unsaved changes", "warn");
+      showMessage(t("noUnsavedChanges"), "warn");
       return;
     }
 
@@ -145,27 +146,23 @@ function Attendance() {
     setTimeout(() => setMessage({ text: "", type: "" }), 3500);
   };
 
-  const markedCount = Object.keys(attendanceData).filter(
-    (id) => attendanceData[id]?.status
-  ).length;
-
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       <Sidebar />
 
-      <main className="flex-1 p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
-            <div className="flex items-center gap-3 mt-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("attendanceTitle")}</h1>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1.5">
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg px-3 py-1.5 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                className="bg-white border border-gray-200 text-gray-900 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
               />
-              <span className="text-sm text-gray-500">
+              <span className="text-xs sm:text-sm text-gray-500">
                 {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", {
                   weekday: "long", day: "numeric", month: "long", year: "numeric",
                 })}
@@ -176,25 +173,25 @@ function Attendance() {
           {workers.length > 0 && (
             <button
               onClick={saveAllAttendance}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs sm:text-sm transition-colors"
             >
               <Save className="w-4 h-4" />
-              <span>Save All</span>
+              <span>{t("saveAll")}</span>
             </button>
           )}
         </div>
 
         {/* Info banner for today */}
         {isToday && (
-          <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 text-sm text-blue-700">
-            Workers marked <strong>Present</strong> or <strong>Half Day</strong> will move to the Reports page and reappear here tomorrow.
+          <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 text-xs sm:text-sm text-blue-700">
+            {t("workersMovedMsg")}
           </div>
         )}
 
         {/* Notification */}
         {message.text && (
           <div
-            className={`px-4 py-3 rounded-lg border text-sm font-medium flex items-center gap-2 ${
+            className={`px-4 py-3 rounded-lg border text-xs sm:text-sm font-medium flex items-center gap-2 ${
               message.type === "success"
                 ? "bg-green-50 text-green-700 border-green-200"
                 : message.type === "warn"
@@ -202,10 +199,10 @@ function Attendance() {
                 : "bg-red-50 text-red-700 border-red-200"
             }`}
           >
-            {message.type === "success" && <Check className="w-4 h-4" />}
-            {message.type === "warn" && <AlertTriangle className="w-4 h-4" />}
-            {message.type === "error" && <XCircle className="w-4 h-4" />}
-            {message.text}
+            {message.type === "success" && <Check className="w-4 h-4 shrink-0" />}
+            {message.type === "warn" && <AlertTriangle className="w-4 h-4 shrink-0" />}
+            {message.type === "error" && <XCircle className="w-4 h-4 shrink-0" />}
+            <span>{message.text}</span>
           </div>
         )}
 
@@ -214,12 +211,10 @@ function Attendance() {
           <div className="py-16 text-center text-gray-400 text-sm">Loading...</div>
         ) : workers.length === 0 ? (
           <div className="py-16 text-center text-gray-400 text-sm">
-            {isToday
-              ? "All workers have been marked for today. Check the Reports page."
-              : "No workers to show for this date."}
+            {isToday ? t("allMarkedMsg") : t("noWorkersDateMsg")}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {workers.map((worker) => {
               const entry = attendanceData[worker._id];
               const status = entry?.status;
@@ -229,7 +224,7 @@ function Attendance() {
               return (
                 <div
                   key={worker._id}
-                  className={`bg-white border rounded-xl p-5 space-y-4 transition-all ${
+                  className={`bg-white border rounded-xl p-4 sm:p-5 space-y-4 transition-all ${
                     status === "Present"
                       ? "border-green-200 bg-green-50/30"
                       : status === "Absent"
@@ -242,24 +237,24 @@ function Attendance() {
                   {/* Worker Info */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 font-bold flex items-center justify-center text-sm">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-brand-50 text-brand-600 font-bold flex items-center justify-center text-sm">
                         {worker.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{worker.name}</h3>
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{worker.name}</h3>
                         <p className="text-xs text-gray-400">{worker.phone || "—"}</p>
                       </div>
                     </div>
 
                     {isSaved && (
                       <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-green-50 text-green-600">
-                        ✓ Saved
+                        ✓ {t("saved")}
                       </span>
                     )}
                   </div>
 
                   {/* Status Buttons */}
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                     <button
                       onClick={() => handleStatusChange(worker._id, "Present")}
                       className={`py-2 rounded-lg text-xs font-medium border transition-all flex items-center justify-center gap-1 ${
@@ -269,7 +264,7 @@ function Attendance() {
                       }`}
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      Present
+                      {t("present")}
                     </button>
                     <button
                       onClick={() => handleStatusChange(worker._id, "Half Day")}
@@ -280,7 +275,7 @@ function Attendance() {
                       }`}
                     >
                       <Clock className="w-3.5 h-3.5" />
-                      Half Day
+                      {t("halfDay")}
                     </button>
                     <button
                       onClick={() => handleStatusChange(worker._id, "Absent")}
@@ -291,19 +286,19 @@ function Attendance() {
                       }`}
                     >
                       <XCircle className="w-3.5 h-3.5" />
-                      Absent
+                      {t("absent")}
                     </button>
                   </div>
 
-                  {/* Wage Input - Manual Entry Only */}
+                  {/* Wage Input */}
                   {(status === "Present" || status === "Half Day") && (
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1">
-                        Salary Amount (₹)
+                        {t("salaryAmount")}
                       </label>
                       <input
                         type="number"
-                        placeholder="Enter amount"
+                        placeholder={t("enterAmount")}
                         value={entry?.wage || ""}
                         onChange={(e) => handleWageChange(worker._id, e.target.value)}
                         className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
@@ -316,23 +311,23 @@ function Attendance() {
                     <button
                       onClick={() => saveAttendance(worker._id)}
                       disabled={isSaving || isSaved}
-                      className={`w-full py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                      className={`w-full py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                         isSaved
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-brand-600 hover:bg-brand-700 text-white"
                       }`}
                     >
                       {isSaving ? (
-                        "Saving..."
+                        t("saving")
                       ) : isSaved ? (
                         <>
                           <Check className="w-3.5 h-3.5 text-green-500" />
-                          Saved
+                          {t("saved")}
                         </>
                       ) : (
                         <>
                           <Save className="w-3.5 h-3.5" />
-                          Save
+                          {t("save")}
                         </>
                       )}
                     </button>

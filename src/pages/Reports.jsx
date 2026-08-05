@@ -1,12 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import { getWorkers, getAttendance } from "../services/api";
 import Sidebar from "../components/Sidebar";
+import { useLanguage } from "../context/LanguageContext";
 import {
   Download,
   Printer,
   Search,
   Calendar,
-  Users,
   CheckCircle2,
   XCircle,
   Clock,
@@ -16,6 +16,7 @@ import {
 function Reports() {
   const getTodayString = () => new Date().toISOString().split("T")[0];
 
+  const { t } = useLanguage();
   const [preset, setPreset] = useState("today");
   const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [startDate, setStartDate] = useState(getTodayString());
@@ -78,7 +79,6 @@ function Reports() {
     }
   };
 
-  // Build report rows: show workers who have attendance records for selected date
   const reportRows = useMemo(() => {
     return workers
       .map((worker) => {
@@ -105,7 +105,7 @@ function Reports() {
           totalSalaryGiven,
         };
       })
-      .filter((row) => row.status !== null); // Only show workers with attendance records
+      .filter((row) => row.status !== null);
   }, [workers, attendanceRecords]);
 
   const filteredReportRows = useMemo(() => {
@@ -123,7 +123,7 @@ function Reports() {
   const totalSalary = reportRows.reduce((sum, r) => sum + r.totalSalaryGiven, 0);
 
   const handleExportCSV = () => {
-    const headers = ["Worker Name", "Phone", "Status", "Total Salary Given (₹)"];
+    const headers = [t("workerName"), t("phone"), t("status"), t("totalSalaryGivenCol") + " (₹)"];
     const csvRows = [
       headers.join(","),
       ...filteredReportRows.map((r) =>
@@ -140,57 +140,64 @@ function Reports() {
     window.URL.revokeObjectURL(url);
   };
 
+  const getTranslatedStatus = (status) => {
+    if (status === "Present") return t("present");
+    if (status === "Absent") return t("absent");
+    if (status === "Half Day") return t("halfDay");
+    return status;
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       <Sidebar />
 
-      <main className="flex-1 p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              View worker attendance and salary data by date
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("reportsTitle")}</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+              {t("reportsSubtitle")}
             </p>
           </div>
 
           <div className="flex items-center gap-2 no-print">
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-xs sm:text-sm transition-colors"
             >
               <Download className="w-4 h-4" />
-              Export CSV
+              <span>{t("exportCsv")}</span>
             </button>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-xs sm:text-sm transition-colors"
             >
               <Printer className="w-4 h-4" />
-              Print
+              <span>{t("print")}</span>
             </button>
           </div>
         </div>
 
         {/* Date Filter Card */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4 no-print">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 space-y-4 no-print">
           {/* Period Presets */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <span className="text-xs font-medium text-gray-400 mr-1 flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" />
-              Period:
+              {t("period")}
             </span>
             {[
-              { id: "today", label: "Today" },
-              { id: "yesterday", label: "Yesterday" },
-              { id: "thisWeek", label: "This Week" },
-              { id: "thisMonth", label: "This Month" },
-              { id: "range", label: "Custom Range" },
+              { id: "today", label: t("todayPreset") },
+              { id: "yesterday", label: t("yesterdayPreset") },
+              { id: "thisWeek", label: t("thisWeekPreset") },
+              { id: "thisMonth", label: t("thisMonthPreset") },
+              { id: "range", label: t("customRange") },
             ].map((p) => (
               <button
                 key={p.id}
                 onClick={() => handlePresetChange(p.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   preset === p.id
                     ? "bg-brand-600 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -201,47 +208,47 @@ function Reports() {
             ))}
           </div>
 
-          {/* Date Inputs */}
-          <div className="flex items-center gap-3 flex-wrap">
+          {/* Date Inputs & Search */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-wrap">
             {preset !== "range" ? (
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+                className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-xs sm:text-sm rounded-lg px-3 py-2 outline-none w-full sm:w-auto"
               />
             ) : (
-              <>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Start Date</label>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex-1 sm:flex-initial">
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{t("startDate")}</label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">End Date</label>
+                <div className="flex-1 sm:flex-initial">
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{t("endDate")}</label>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg px-3 py-2 outline-none"
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none"
                   />
                 </div>
-              </>
+              </div>
             )}
 
-            <div className="ml-auto">
+            <div className="w-full sm:w-64">
               <div className="relative">
                 <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search worker..."
+                  placeholder={t("searchWorker")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-sm rounded-lg pl-9 pr-3 py-2 outline-none w-48"
+                  className="w-full bg-gray-50 border border-gray-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-gray-900 text-xs sm:text-sm rounded-lg pl-9 pr-3 py-2 outline-none"
                 />
               </div>
             </div>
@@ -249,54 +256,54 @@ function Reports() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xl font-bold text-gray-900">{presentCount}</span>
-              <p className="text-[11px] text-gray-500">Present</p>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">{presentCount}</span>
+              <p className="text-[11px] text-gray-500">{t("present")}</p>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+          <div className="bg-white border border-gray-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 text-red-500 flex items-center justify-center shrink-0">
               <XCircle className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xl font-bold text-gray-900">{absentCount}</span>
-              <p className="text-[11px] text-gray-500">Absent</p>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">{absentCount}</span>
+              <p className="text-[11px] text-gray-500">{t("absent")}</p>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+          <div className="bg-white border border-gray-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xl font-bold text-gray-900">{halfDayCount}</span>
-              <p className="text-[11px] text-gray-500">Half Day</p>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">{halfDayCount}</span>
+              <p className="text-[11px] text-gray-500">{t("halfDay")}</p>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+          <div className="bg-white border border-gray-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
               <IndianRupee className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xl font-bold text-gray-900">₹{totalSalary.toLocaleString()}</span>
-              <p className="text-[11px] text-gray-500">Total Salary</p>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">₹{totalSalary.toLocaleString()}</span>
+              <p className="text-[11px] text-gray-500">{t("totalSalary")}</p>
             </div>
           </div>
         </div>
 
         {/* Report Table */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-900">Worker Report</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t("workerReport")}</h2>
             <span className="text-xs font-medium text-gray-400">
-              {filteredReportRows.length} records
+              {filteredReportRows.length} {t("records")}
             </span>
           </div>
 
@@ -304,17 +311,17 @@ function Reports() {
             <div className="py-12 text-center text-gray-400 text-sm">Loading...</div>
           ) : filteredReportRows.length === 0 ? (
             <div className="py-12 text-center text-gray-400 text-sm">
-              No attendance data found for the selected date.
+              {t("noDataDate")}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full text-left min-w-[500px]">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    <th className="py-3 px-4">Worker Name</th>
-                    <th className="py-3 px-4">Phone</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4">Total Salary Given</th>
+                    <th className="py-3 px-4">{t("workerName")}</th>
+                    <th className="py-3 px-4">{t("phone")}</th>
+                    <th className="py-3 px-4">{t("status")}</th>
+                    <th className="py-3 px-4">{t("totalSalaryGivenCol")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 text-sm">
@@ -339,7 +346,7 @@ function Reports() {
                           {row.status === "Present" && <CheckCircle2 className="w-3 h-3" />}
                           {row.status === "Absent" && <XCircle className="w-3 h-3" />}
                           {row.status === "Half Day" && <Clock className="w-3 h-3" />}
-                          {row.status}
+                          {getTranslatedStatus(row.status)}
                         </span>
                       </td>
                       <td className="py-3 px-4 font-semibold text-gray-900">

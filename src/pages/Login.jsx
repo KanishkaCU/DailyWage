@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { loginUser, signupUser } from "../services/api";
+import { useLanguage } from "../context/LanguageContext";
 import {
   User,
   Mail,
@@ -9,10 +10,12 @@ import {
   EyeOff,
   AlertCircle,
   ArrowRight,
+  Globe,
 } from "lucide-react";
 
 function Login() {
   const navigate = useNavigate();
+  const { language, setLanguage, t, languages } = useLanguage();
 
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState("");
@@ -77,14 +80,30 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-sm space-y-6">
+      {/* Language Selector Top Right */}
+      <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-xs">
+        <Globe className="w-4 h-4 text-gray-400" />
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="bg-transparent text-xs sm:text-sm font-medium text-gray-700 outline-none cursor-pointer"
+        >
+          {languages.map((lang) => (
+            <option key={lang.code} value={lang.code}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
         {/* Header */}
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-bold text-gray-900">
             Daily<span className="text-brand-600">Wage</span>
           </h1>
-          <p className="text-sm text-gray-500">
-            Attendance & Salary Manager
+          <p className="text-xs sm:text-sm text-gray-500">
+            {t("tagline")}
           </p>
         </div>
 
@@ -92,30 +111,30 @@ function Login() {
         <div className="grid grid-cols-2 p-1 bg-gray-100 rounded-xl">
           <button
             onClick={() => { setIsSignup(false); setError(""); }}
-            className={`py-2 text-sm font-medium rounded-lg transition-all ${
+            className={`py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
               !isSignup
-                ? "bg-white text-gray-900 shadow-sm"
+                ? "bg-white text-gray-900 shadow-xs"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Log In
+            {t("loginTab")}
           </button>
           <button
             onClick={() => { setIsSignup(true); setError(""); }}
-            className={`py-2 text-sm font-medium rounded-lg transition-all ${
+            className={`py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
               isSignup
-                ? "bg-white text-gray-900 shadow-sm"
+                ? "bg-white text-gray-900 shadow-xs"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Sign Up
+            {t("signupTab")}
           </button>
         </div>
 
         {/* Form */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Username</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("usernameLabel")}</label>
             <div className="relative">
               <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -131,7 +150,7 @@ function Login() {
 
           {isSignup && (
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Email</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("emailLabel")}</label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -147,7 +166,7 @@ function Login() {
           )}
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Password</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("passwordLabel")}</label>
             <div className="relative">
               <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -170,7 +189,7 @@ function Login() {
 
           {isSignup && (
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Confirm Password</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">{t("confirmPasswordLabel")}</label>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -186,7 +205,7 @@ function Login() {
           )}
 
           {error && (
-            <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2 text-sm text-red-600">
+            <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2 text-xs sm:text-sm text-red-600">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -198,10 +217,10 @@ function Login() {
             className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
           >
             {loading ? (
-              "Authenticating..."
+              t("authenticating")
             ) : (
               <>
-                {isSignup ? "Create Account" : "Sign In"}
+                {isSignup ? t("createAccountBtn") : t("signInBtn")}
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
