@@ -63,12 +63,7 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (err) {
-      // 🔥 Show backend error message properly
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Something went wrong");
-      }
+      setError(err.message || "Authentication failed. Please check credentials.");
     } finally {
       setLoading(false);
     }
@@ -78,8 +73,14 @@ function Login() {
     <div className="login-container">
       <div className="login-box">
         <center>
-          <h1>DailyWage</h1>
-          <h2>{isSignup ? "Sign Up" : "Login"}</h2>
+          <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "48px", height: "48px", borderRadius: "14px", background: "linear-gradient(135deg, #6366F1, #4F46E5)", color: "#FFF", fontSize: "1.4rem", marginBottom: "10px" }}>
+            ⚡
+          </div>
+          <h1 style={{ fontSize: "1.75rem", fontWeight: "800", color: "#FFF", margin: 0 }}>DailyWage</h1>
+          <p style={{ color: "#94A3B8", fontSize: "0.9rem", marginTop: "4px", marginBottom: "20px" }}>Workforce Management System</p>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: "700", color: "#F8FAFC", marginBottom: "15px" }}>
+            {isSignup ? "Create an Account" : "Welcome Back"}
+          </h2>
         </center>
 
         <input
@@ -87,14 +88,16 @@ function Login() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         />
 
         {isSignup && (
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
         )}
 
@@ -103,6 +106,7 @@ function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         />
 
         {isSignup && (
@@ -111,14 +115,15 @@ function Login() {
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
         )}
 
         {error && (
-          <p style={{ color: "red", fontSize: "14px" }}>{error}</p>
+          <p style={{ color: "#EF4444", fontSize: "0.85rem", marginTop: "8px", fontWeight: "500" }}>{error}</p>
         )}
 
-        <button onClick={handleSubmit} disabled={loading}>
+        <button onClick={handleSubmit} disabled={loading} style={{ marginTop: "16px" }}>
           {loading ? "Please wait..." : isSignup ? "Sign Up" : "Login"}
         </button>
 
@@ -127,7 +132,7 @@ function Login() {
             setIsSignup(!isSignup);
             setError("");
           }}
-          style={{ cursor: "pointer", textAlign: "center", marginTop: "10px" }}
+          style={{ cursor: "pointer", textAlign: "center", marginTop: "16px", color: "#818CF8", fontSize: "0.88rem" }}
         >
           {isSignup
             ? "Already have an account? Login"

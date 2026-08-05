@@ -285,74 +285,40 @@ function AddWorker() {
           {/* ================= WORKER LIST ================= */}
 
           <div className="aw-list-card">
-
             <div className="aw-list-header">
-              <span className="aw-list-title">
-                RECENT WORKERS
-              </span>
-
-              <span className="aw-list-badge">
-                {workers.length}
-              </span>
+              <span className="aw-list-title">RECENT WORKERS</span>
+              <span className="aw-list-badge">{workers.length}</span>
             </div>
-                          <div className="aw-list-loading">
 
-                {[1,2,3].map((item)=>(
-                  <div
-                    key={item}
-                    className="aw-skeleton"
-                  />
+            {loading ? (
+              <div className="aw-list-loading">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="aw-skeleton" />
                 ))}
-
               </div>
-
             ) : workers.length === 0 ? (
-
               <div className="aw-empty">
-
                 <h3>No Workers</h3>
-
-                <p>
-                  Add your first worker to get started.
-                </p>
-
+                <p>Add your first worker to get started.</p>
               </div>
-
             ) : (
-
               <div className="aw-roster">
-
-                {workers.map((worker,index)=>(
-                  <div
-                    key={worker._id}
-                    className="aw-roster-item"
-                  >
-
+                {workers.map((worker) => (
+                  <div key={worker._id} className="aw-roster-item">
                     <div className="aw-roster-avatar">
                       {worker.name.charAt(0).toUpperCase()}
                     </div>
 
                     <div className="aw-roster-info">
-
-                      <span className="aw-roster-name">
-                        {worker.name}
-                      </span>
-
-                      <span className="aw-roster-phone">
-                        {worker.phone}
-                      </span>
-
+                      <span className="aw-roster-name">{worker.name}</span>
+                      <span className="aw-roster-phone">{worker.phone || "—"}</span>
                     </div>
 
-                    <div className="aw-roster-indicator"/>
-
+                    <div className="aw-roster-indicator" />
                   </div>
                 ))}
-
               </div>
-
-            )
-
+            )}
           </div>
 
           <button

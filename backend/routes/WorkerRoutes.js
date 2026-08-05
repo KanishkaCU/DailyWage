@@ -1,5 +1,6 @@
 const express = require("express");
 const Worker = require("../models/Worker");
+const Attendance = require("../models/attendance");
 
 const router = express.Router();
 
@@ -34,6 +35,23 @@ router.get("/", async (req, res) => {
     res.json(workers);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch workers" });
+  }
+});
+
+/* DELETE WORKER */
+router.delete("/:id", async (req, res) => {
+  try {
+    const worker = await Worker.findById(req.params.id);
+    if (!worker) {
+      return res.status(404).json({ message: "Worker not found" });
+    }
+
+    await Attendance.deleteMany({ workerId: req.params.id });
+    await Worker.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Worker and associated attendance records deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete worker" });
   }
 });
 

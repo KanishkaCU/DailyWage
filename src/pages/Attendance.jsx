@@ -1,24 +1,55 @@
 import { useEffect, useState } from "react";
-import { getWorkers, markAttendance } from "../services/api";
+import { getWorkers, markAttendance, getAttendance } from "../services/api";
 import Sidebar from "../components/Sidebar";
 import "../styles/attendance.css";
 
 function Attendance() {
+  const getTodayString = () => new Date().toISOString().split("T")[0];
+
+  const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [workers, setWorkers] = useState([]);
   const [attendanceData, setAttendanceData] = useState({});
   const [message, setMessage] = useState({ text: "", type: "" });
   const [saving, setSaving] = useState({});
   const [saved, setSaved] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  const userId = localStorage.getItem("userId");
-  const today = new Date().toISOString().split("T")[0];
-  const displayDate = new Date().toLocaleDateString("en-IN", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric",
-  });
-
+  // Load workers & saved attendance whenever selectedDate changes
   useEffect(() => {
-    getWorkers(userId).then(setWorkers).catch(console.error);
-  }, []);
+    fetchWorkersAndAttendance();
+  }, [selectedDate]);
+
+  const fetchWorkersAndAttendance = async () => {
+    try {
+      setLoading(true);
+      const workerList = await getWorkers();
+      setWorkers(workerList || []);
+
+      const attList = await getAttendance(selectedDate);
+
+      // Map fetched attendance to attendanceData state
+      const initialMap = {};
+      const savedMap = {};
+
+      (attList || []).forEach((record) => {
+        const wId = record.workerId?._id || record.workerId;
+        if (wId) {
+          initialMap[wId] = {
+            status: record.status,
+            wage: record.wage || "",
+          };
+          savedMap[wId] = true;
+        }
+      });
+
+      setAttendanceData(initialMap);
+      setSaved(savedMap);
+    } catch (err) {
+      console.error("Failed to load attendance log:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleStatusChange = (workerId, status) => {
     setSaved((p) => ({ ...p, [workerId]: false }));
@@ -29,19 +60,23 @@ function Attendance() {
   };
 
   const handleWageChange = (workerId, wage) => {
+    setSaved((p) => ({ ...p, [workerId]: false }));
     setAttendanceData((p) => ({
       ...p,
       [workerId]: { ...p[workerId], wage },
     }));
   };
 
+  const setWagePreset = (workerId, amount) => {
+    handleWageChange(workerId, amount);
+  };
+
   const saveAttendance = async (workerId) => {
     const data = attendanceData[workerId];
-    if (!data) return;
+    if (!data || !data.status) return;
 
-    if (data.status === "Present" && !data.wage) {
-      setMessage({ text: "Please enter wage before saving", type: "warn" });
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+    if ((data.status === "Present" || data.status === "Half Day") && (!data.wage || Number(data.wage) <= 0)) {
+      showMessage("Please enter a valid wage amount before saving", "warn");
       return;
     }
 
@@ -50,24 +85,51 @@ function Attendance() {
     try {
       await markAttendance({
         workerId,
-        date: today,
+        date: selectedDate,
         status: data.status,
-        wage: data.status === "Present" ? Number(data.wage) : 0,
+        wage: data.status === "Absent" ? 0 : Number(data.wage),
       });
       setSaved((p) => ({ ...p, [workerId]: true }));
-      setMessage({ text: "Attendance saved successfully", type: "success" });
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
-    } catch {
-      setMessage({ text: "Failed to save attendance", type: "error" });
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+      showMessage("Attendance saved successfully", "success");
+    } catch (err) {
+      showMessage("Failed to save attendance", "error");
     } finally {
       setSaving((p) => ({ ...p, [workerId]: false }));
     }
   };
 
+  // Save all marked records at once
+  const saveAllAttendance = async () => {
+    const workerIds = Object.keys(attendanceData).filter(
+      (id) => attendanceData[id]?.status && !saved[id]
+    );
+
+    if (workerIds.length === 0) {
+      showMessage("No unsaved attendance changes found", "warn");
+      return;
+    }
+
+    for (const wId of workerIds) {
+      await saveAttendance(wId);
+    }
+  };
+
+  const showMessage = (text, type) => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage({ text: "", type: "" }), 3500);
+  };
+
   const presentCount = Object.values(attendanceData).filter((d) => d.status === "Present").length;
   const absentCount = Object.values(attendanceData).filter((d) => d.status === "Absent").length;
+  const halfDayCount = Object.values(attendanceData).filter((d) => d.status === "Half Day").length;
   const markedCount = Object.keys(attendanceData).length;
+
+  const displayDate = new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div className="att-layout">
@@ -77,10 +139,31 @@ function Attendance() {
         {/* Top Bar */}
         <div className="att-topbar">
           <div className="att-topbar-left">
-            <span className="att-eyebrow">WORKFORCE MANAGEMENT</span>
-            <h1 className="att-title">Attendance <span className="att-title-accent">Log</span></h1>
-            <span className="att-date">{displayDate}</span>
+            <span className="att-eyebrow">DAILY ATTENDANCE SYSTEM</span>
+            <h1 className="att-title">
+              Attendance <span className="att-title-accent">Log</span>
+            </h1>
+
+            {/* Date Selector */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "8px" }}>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                style={{
+                  background: "#1E2640",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: "#FFF",
+                  padding: "6px 12px",
+                  borderRadius: "10px",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                }}
+              />
+              <span className="att-date">{displayDate}</span>
+            </div>
           </div>
+
           <div className="att-topbar-right">
             <div className="att-stat-pill att-stat-pill--green">
               <span className="att-stat-dot" />
@@ -96,20 +179,41 @@ function Attendance() {
           </div>
         </div>
 
-        {/* Progress Bar */}
-        {workers.length > 0 && (
-          <div className="att-progress-wrap">
-            <div className="att-progress-track">
-              <div
-                className="att-progress-fill"
-                style={{ width: `${(markedCount / workers.length) * 100}%` }}
-              />
+        {/* Progress & Quick Actions */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          {workers.length > 0 && (
+            <div className="att-progress-wrap" style={{ flex: 1, minWidth: "250px", marginBottom: 0 }}>
+              <div className="att-progress-track">
+                <div
+                  className="att-progress-fill"
+                  style={{ width: `${(markedCount / workers.length) * 100}%` }}
+                />
+              </div>
+              <span className="att-progress-label">
+                {Math.round((markedCount / workers.length) * 100)}% logged
+              </span>
             </div>
-            <span className="att-progress-label">
-              {Math.round((markedCount / workers.length) * 100)}% logged
-            </span>
-          </div>
-        )}
+          )}
+
+          {workers.length > 0 && (
+            <button
+              onClick={saveAllAttendance}
+              style={{
+                background: "linear-gradient(135deg, #6366F1, #4F46E5)",
+                color: "#FFF",
+                border: "none",
+                padding: "8px 18px",
+                borderRadius: "10px",
+                fontWeight: "600",
+                fontSize: "0.88rem",
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(99,102,241,0.3)",
+              }}
+            >
+              💾 Save All Attendance
+            </button>
+          )}
+        </div>
 
         {/* Global Message */}
         {message.text && (
@@ -121,11 +225,13 @@ function Attendance() {
           </div>
         )}
 
-        {/* Worker Cards */}
-        {workers.length === 0 ? (
+        {/* Worker Cards Grid */}
+        {loading ? (
+          <div style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>Loading workforce roster...</div>
+        ) : workers.length === 0 ? (
           <div className="att-empty">
             <div className="att-empty-icon">👷</div>
-            <p>No workers found. Add workers first.</p>
+            <p>No workers registered yet. Add workers first.</p>
           </div>
         ) : (
           <div className="att-grid">
@@ -159,35 +265,69 @@ function Attendance() {
                   </div>
 
                   {/* Status Toggle */}
-                  <div className="att-toggle-group">
+                  <div className="att-toggle-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px" }}>
                     <button
                       className={`att-toggle att-toggle--present ${status === "Present" ? "active" : ""}`}
                       onClick={() => handleStatusChange(worker._id, "Present")}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                       Present
+                    </button>
+                    <button
+                      className={`att-toggle ${status === "Half Day" ? "active" : ""}`}
+                      style={{
+                        background: status === "Half Day" ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.04)",
+                        color: status === "Half Day" ? "#F59E0B" : "#CBD5E1",
+                        border: status === "Half Day" ? "1px solid #F59E0B" : "1px solid transparent",
+                        borderRadius: "8px",
+                        fontSize: "0.8rem",
+                        fontWeight: "600",
+                        padding: "6px 4px",
+                      }}
+                      onClick={() => handleStatusChange(worker._id, "Half Day")}
+                    >
+                      Half Day
                     </button>
                     <button
                       className={`att-toggle att-toggle--absent ${status === "Absent" ? "active" : ""}`}
                       onClick={() => handleStatusChange(worker._id, "Absent")}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       Absent
                     </button>
                   </div>
 
-                  {/* Wage Input */}
-                  {status === "Present" && (
-                    <div className="att-wage-row">
-                      <div className="att-wage-input-wrap">
+                  {/* Wage Input & Presets */}
+                  {(status === "Present" || status === "Half Day") && (
+                    <div className="att-wage-row" style={{ flexDirection: "column", gap: "8px" }}>
+                      <div className="att-wage-input-wrap" style={{ width: "100%" }}>
                         <span className="att-wage-prefix">₹</span>
                         <input
                           className="att-wage-input"
                           type="number"
-                          placeholder="Daily wage"
+                          placeholder="Enter daily wage"
                           value={entry?.wage || ""}
                           onChange={(e) => handleWageChange(worker._id, e.target.value)}
                         />
+                      </div>
+
+                      {/* Quick Presets */}
+                      <div style={{ display: "flex", gap: "6px", overflowX: "auto" }}>
+                        {[500, 600, 700, 800, 1000].map((presetAmt) => (
+                          <button
+                            key={presetAmt}
+                            onClick={() => setWagePreset(worker._id, presetAmt)}
+                            style={{
+                              background: "rgba(255,255,255,0.06)",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              color: "#CBD5E1",
+                              fontSize: "0.72rem",
+                              padding: "2px 8px",
+                              borderRadius: "6px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            ₹{presetAmt}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -213,12 +353,6 @@ function Attendance() {
             })}
           </div>
         )}
-
-        <button className="att-back-btn" onClick={() => window.history.back()}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
-          Done
-        </button>
-        
       </main>
     </div>
   );

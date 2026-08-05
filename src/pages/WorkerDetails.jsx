@@ -388,6 +388,69 @@ function WorkerDetails() {
 
         </div>
 
+        {/* ================= ATTENDANCE HISTORY ================= */}
+        <div className="wd-history" style={{ marginTop: "24px" }}>
+          <h3>📅 Attendance History</h3>
+          {attendanceRecords.length === 0 ? (
+            <div className="wd-empty">
+              <div className="wd-empty-icon">📅</div>
+              <p>No attendance recorded for this worker yet.</p>
+            </div>
+          ) : (
+            <div className="table-responsive" style={{ marginTop: "12px" }}>
+              <table className="ui-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Wage Earned</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceRecords.map((record) => (
+                    <tr key={record._id}>
+                      <td>
+                        {new Date(record.date).toLocaleDateString("en-IN", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td>
+                        <span
+                          style={{
+                            padding: "3px 8px",
+                            borderRadius: "6px",
+                            fontSize: "0.78rem",
+                            fontWeight: "600",
+                            background:
+                              record.status === "Present"
+                                ? "rgba(16, 185, 129, 0.15)"
+                                : record.status === "Absent"
+                                ? "rgba(239, 68, 68, 0.15)"
+                                : "rgba(245, 158, 11, 0.15)",
+                            color:
+                              record.status === "Present"
+                                ? "#10B981"
+                                : record.status === "Absent"
+                                ? "#EF4444"
+                                : "#F59E0B",
+                          }}
+                        >
+                          {record.status}
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: "600", color: "#10B981" }}>
+                        ₹{record.wage || 0}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </main>
 
     </div>
