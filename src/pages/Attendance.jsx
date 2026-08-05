@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { getWorkers, markAttendance, getAttendance } from "../services/api";
 import Sidebar from "../components/Sidebar";
-import "../styles/attendance.css";
+import {
+  CalendarCheck,
+  Save,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  Check,
+  Sparkles,
+  IndianRupee,
+} from "lucide-react";
 
 function Attendance() {
   const getTodayString = () => new Date().toISOString().split("T")[0];
@@ -14,7 +24,6 @@ function Attendance() {
   const [saved, setSaved] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Load workers & saved attendance whenever selectedDate changes
   useEffect(() => {
     fetchWorkersAndAttendance();
   }, [selectedDate]);
@@ -27,7 +36,6 @@ function Attendance() {
 
       const attList = await getAttendance(selectedDate);
 
-      // Map fetched attendance to attendanceData state
       const initialMap = {};
       const savedMap = {};
 
@@ -75,7 +83,10 @@ function Attendance() {
     const data = attendanceData[workerId];
     if (!data || !data.status) return;
 
-    if ((data.status === "Present" || data.status === "Half Day") && (!data.wage || Number(data.wage) <= 0)) {
+    if (
+      (data.status === "Present" || data.status === "Half Day") &&
+      (!data.wage || Number(data.wage) <= 0)
+    ) {
       showMessage("Please enter a valid wage amount before saving", "warn");
       return;
     }
@@ -98,7 +109,6 @@ function Attendance() {
     }
   };
 
-  // Save all marked records at once
   const saveAllAttendance = async () => {
     const workerIds = Object.keys(attendanceData).filter(
       (id) => attendanceData[id]?.status && !saved[id]
@@ -132,110 +142,104 @@ function Attendance() {
   });
 
   return (
-    <div className="att-layout">
+    <div className="flex min-h-screen bg-slate-950 text-slate-100">
       <Sidebar />
 
-      <main className="att-main">
-        {/* Top Bar */}
-        <div className="att-topbar">
-          <div className="att-topbar-left">
-            <span className="att-eyebrow">DAILY ATTENDANCE SYSTEM</span>
-            <h1 className="att-title">
-              Attendance <span className="att-title-accent">Log</span>
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-400 mb-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Daily Attendance System</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Attendance Log
             </h1>
 
             {/* Date Selector */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "8px" }}>
+            <div className="flex items-center gap-3 mt-2">
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                style={{
-                  background: "#1E2640",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  color: "#FFF",
-                  padding: "6px 12px",
-                  borderRadius: "10px",
-                  fontSize: "0.9rem",
-                  cursor: "pointer",
-                }}
+                className="bg-slate-900 border border-slate-700 text-white font-medium text-xs rounded-xl px-3 py-1.5 outline-none focus:border-brand-500 cursor-pointer"
               />
-              <span className="att-date">{displayDate}</span>
+              <span className="text-sm font-semibold text-slate-300">{displayDate}</span>
             </div>
           </div>
 
-          <div className="att-topbar-right">
-            <div className="att-stat-pill att-stat-pill--green">
-              <span className="att-stat-dot" />
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <CheckCircle2 className="w-3.5 h-3.5" />
               {presentCount} Present
-            </div>
-            <div className="att-stat-pill att-stat-pill--red">
-              <span className="att-stat-dot att-stat-dot--red" />
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+              <XCircle className="w-3.5 h-3.5" />
               {absentCount} Absent
-            </div>
-            <div className="att-stat-pill">
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
               {markedCount}/{workers.length} Marked
-            </div>
+            </span>
           </div>
         </div>
 
-        {/* Progress & Quick Actions */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+        {/* Progress Tracker & Bulk Action */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-4">
           {workers.length > 0 && (
-            <div className="att-progress-wrap" style={{ flex: 1, minWidth: "250px", marginBottom: 0 }}>
-              <div className="att-progress-track">
+            <div className="flex-1 max-w-md">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400 mb-1.5">
+                <span>Logging Progress</span>
+                <span className="text-brand-400">{Math.round((markedCount / workers.length) * 100)}% Logged</span>
+              </div>
+              <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
                 <div
-                  className="att-progress-fill"
+                  className="h-full bg-gradient-to-r from-brand-600 to-emerald-500 transition-all duration-300"
                   style={{ width: `${(markedCount / workers.length) * 100}%` }}
                 />
               </div>
-              <span className="att-progress-label">
-                {Math.round((markedCount / workers.length) * 100)}% logged
-              </span>
             </div>
           )}
 
           {workers.length > 0 && (
             <button
               onClick={saveAllAttendance}
-              style={{
-                background: "linear-gradient(135deg, #6366F1, #4F46E5)",
-                color: "#FFF",
-                border: "none",
-                padding: "8px 18px",
-                borderRadius: "10px",
-                fontWeight: "600",
-                fontSize: "0.88rem",
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(99,102,241,0.3)",
-              }}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-brand-600/25 transition-all duration-200"
             >
-              💾 Save All Attendance
+              <Save className="w-4 h-4" />
+              <span>Save All Changes</span>
             </button>
           )}
         </div>
 
-        {/* Global Message */}
+        {/* Banner Notification */}
         {message.text && (
-          <div className={`att-message att-message--${message.type}`}>
-            {message.type === "success" && "✓ "}
-            {message.type === "warn" && "⚠ "}
-            {message.type === "error" && "✕ "}
-            {message.text}
+          <div
+            className={`p-4 rounded-xl border flex items-center gap-3 text-sm font-semibold ${
+              message.type === "success"
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                : message.type === "warn"
+                ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                : "bg-rose-500/10 text-rose-400 border-rose-500/30"
+            }`}
+          >
+            {message.type === "success" && <Check className="w-4 h-4" />}
+            {message.type === "warn" && <AlertTriangle className="w-4 h-4" />}
+            {message.type === "error" && <XCircle className="w-4 h-4" />}
+            <span>{message.text}</span>
           </div>
         )}
 
         {/* Worker Cards Grid */}
         {loading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>Loading workforce roster...</div>
+          <div className="py-16 text-center text-slate-500 text-sm">Loading workforce roster...</div>
         ) : workers.length === 0 ? (
-          <div className="att-empty">
-            <div className="att-empty-icon">👷</div>
-            <p>No workers registered yet. Add workers first.</p>
+          <div className="py-16 text-center text-slate-400 text-sm">
+            No workers registered yet. Add workers first.
           </div>
         ) : (
-          <div className="att-grid">
-            {workers.map((worker, idx) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {workers.map((worker) => {
               const entry = attendanceData[worker._id];
               const status = entry?.status;
               const isSaved = saved[worker._id];
@@ -244,107 +248,131 @@ function Attendance() {
               return (
                 <div
                   key={worker._id}
-                  className={`att-card ${status === "Present" ? "att-card--present" : ""} ${status === "Absent" ? "att-card--absent" : ""} ${isSaved ? "att-card--saved" : ""}`}
-                  style={{ animationDelay: `${idx * 0.04}s` }}
+                  className={`bg-slate-900 border rounded-2xl p-5 shadow-sm space-y-4 transition-all duration-200 ${
+                    status === "Present"
+                      ? "border-emerald-500/40 bg-emerald-950/10"
+                      : status === "Absent"
+                      ? "border-rose-500/40 bg-rose-950/10"
+                      : status === "Half Day"
+                      ? "border-amber-500/40 bg-amber-950/10"
+                      : "border-slate-800"
+                  }`}
                 >
                   {/* Card Header */}
-                  <div className="att-card-header">
-                    <div className="att-avatar">
-                      {worker.name.charAt(0).toUpperCase()}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold flex items-center justify-center shrink-0 shadow-sm text-sm">
+                        {worker.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white text-base leading-tight">{worker.name}</h3>
+                        <p className="text-xs text-slate-400">{worker.phone || "—"}</p>
+                      </div>
                     </div>
-                    <div className="att-worker-info">
-                      <span className="att-worker-name">{worker.name}</span>
-                      <span className="att-worker-phone">{worker.phone || "—"}</span>
-                    </div>
-                    {isSaved && (
-                      <div className="att-saved-badge">✓ Saved</div>
-                    )}
-                    {!status && (
-                      <div className="att-pending-badge">Pending</div>
+
+                    {isSaved ? (
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        Saved
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                        Pending
+                      </span>
                     )}
                   </div>
 
-                  {/* Status Toggle */}
-                  <div className="att-toggle-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px" }}>
+                  {/* Status Toggle Grid */}
+                  <div className="grid grid-cols-3 gap-2">
                     <button
-                      className={`att-toggle att-toggle--present ${status === "Present" ? "active" : ""}`}
                       onClick={() => handleStatusChange(worker._id, "Present")}
+                      className={`py-2 rounded-xl text-xs font-semibold border transition-all duration-200 flex items-center justify-center gap-1 ${
+                        status === "Present"
+                          ? "bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-600/30"
+                          : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
+                      }`}
                     >
-                      Present
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Present</span>
                     </button>
+
                     <button
-                      className={`att-toggle ${status === "Half Day" ? "active" : ""}`}
-                      style={{
-                        background: status === "Half Day" ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.04)",
-                        color: status === "Half Day" ? "#F59E0B" : "#CBD5E1",
-                        border: status === "Half Day" ? "1px solid #F59E0B" : "1px solid transparent",
-                        borderRadius: "8px",
-                        fontSize: "0.8rem",
-                        fontWeight: "600",
-                        padding: "6px 4px",
-                      }}
                       onClick={() => handleStatusChange(worker._id, "Half Day")}
+                      className={`py-2 rounded-xl text-xs font-semibold border transition-all duration-200 flex items-center justify-center gap-1 ${
+                        status === "Half Day"
+                          ? "bg-amber-600 text-white border-amber-500 shadow-md shadow-amber-600/30"
+                          : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
+                      }`}
                     >
-                      Half Day
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Half Day</span>
                     </button>
+
                     <button
-                      className={`att-toggle att-toggle--absent ${status === "Absent" ? "active" : ""}`}
                       onClick={() => handleStatusChange(worker._id, "Absent")}
+                      className={`py-2 rounded-xl text-xs font-semibold border transition-all duration-200 flex items-center justify-center gap-1 ${
+                        status === "Absent"
+                          ? "bg-rose-600 text-white border-rose-500 shadow-md shadow-rose-600/30"
+                          : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
+                      }`}
                     >
-                      Absent
+                      <XCircle className="w-3.5 h-3.5" />
+                      <span>Absent</span>
                     </button>
                   </div>
 
                   {/* Wage Input & Presets */}
                   {(status === "Present" || status === "Half Day") && (
-                    <div className="att-wage-row" style={{ flexDirection: "column", gap: "8px" }}>
-                      <div className="att-wage-input-wrap" style={{ width: "100%" }}>
-                        <span className="att-wage-prefix">₹</span>
+                    <div className="space-y-2 pt-1">
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">₹</span>
                         <input
-                          className="att-wage-input"
                           type="number"
                           placeholder="Enter daily wage"
                           value={entry?.wage || ""}
                           onChange={(e) => handleWageChange(worker._id, e.target.value)}
+                          className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-white text-xs font-semibold rounded-xl pl-8 pr-3 py-2 outline-none"
                         />
                       </div>
 
                       {/* Quick Presets */}
-                      <div style={{ display: "flex", gap: "6px", overflowX: "auto" }}>
-                        {[500, 600, 700, 800, 1000].map((presetAmt) => (
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase mr-1">Quick:</span>
+                        {[500, 600, 700, 800, 1000].map((amt) => (
                           <button
-                            key={presetAmt}
-                            onClick={() => setWagePreset(worker._id, presetAmt)}
-                            style={{
-                              background: "rgba(255,255,255,0.06)",
-                              border: "1px solid rgba(255,255,255,0.1)",
-                              color: "#CBD5E1",
-                              fontSize: "0.72rem",
-                              padding: "2px 8px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                            }}
+                            key={amt}
+                            onClick={() => setWagePreset(worker._id, amt)}
+                            className="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-semibold transition-colors shrink-0"
                           >
-                            ₹{presetAmt}
+                            ₹{amt}
                           </button>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Save Button */}
+                  {/* Individual Save Button */}
                   {status && (
                     <button
-                      className={`att-save-btn ${isSaved ? "att-save-btn--done" : ""}`}
                       onClick={() => saveAttendance(worker._id)}
                       disabled={isSaving || isSaved}
+                      className={`w-full py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                        isSaved
+                          ? "bg-slate-800 text-slate-400 cursor-not-allowed"
+                          : "bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-600/25"
+                      }`}
                     >
                       {isSaving ? (
-                        <span className="att-spinner" />
+                        <span>Saving...</span>
                       ) : isSaved ? (
-                        "✓ Saved"
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Saved</span>
+                        </>
                       ) : (
-                        "Save Attendance"
+                        <>
+                          <Save className="w-3.5 h-3.5" />
+                          <span>Save Entry</span>
+                        </>
                       )}
                     </button>
                   )}

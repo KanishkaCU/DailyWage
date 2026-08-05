@@ -2,10 +2,10 @@ import { useEffect, useState, useMemo } from "react";
 import { getWorkers, getAttendance } from "../services/api";
 import Sidebar from "../components/Sidebar";
 import {
-  PieChart,
+  PieChart as RePieChart,
   Pie,
   Cell,
-  BarChart,
+  BarChart as ReBarChart,
   Bar,
   XAxis,
   YAxis,
@@ -13,7 +13,21 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import "../styles/reports.css";
+import {
+  TrendingUp,
+  Download,
+  Printer,
+  Search,
+  Filter,
+  Calendar,
+  Users,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  IndianRupee,
+  CreditCard,
+  FileSpreadsheet,
+} from "lucide-react";
 
 function Reports() {
   const getTodayString = () => new Date().toISOString().split("T")[0];
@@ -30,7 +44,6 @@ function Reports() {
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch workers & attendance whenever date / range changes
   useEffect(() => {
     loadReportData();
   }, [preset, selectedDate, startDate, endDate]);
@@ -55,7 +68,6 @@ function Reports() {
     }
   };
 
-  // Quick Preset Handler
   const handlePresetChange = (type) => {
     setPreset(type);
     const today = new Date();
@@ -70,9 +82,8 @@ function Reports() {
       const curr = new Date();
       const first = curr.getDate() - curr.getDay() + 1;
       const monday = new Date(curr.setDate(first)).toISOString().split("T")[0];
-      const sunday = getTodayString();
       setStartDate(monday);
-      setEndDate(sunday);
+      setEndDate(getTodayString());
       setPreset("range");
     } else if (type === "thisMonth") {
       const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -84,10 +95,8 @@ function Reports() {
     }
   };
 
-  // Combine Workers with Attendance for the target date/range
   const reportRows = useMemo(() => {
     return workers.map((worker) => {
-      // Find attendance record matching worker ID
       const recordsForWorker = attendanceRecords.filter(
         (r) =>
           r.workerId?._id === worker._id ||
@@ -95,7 +104,6 @@ function Reports() {
           (typeof r.workerId === "object" && r.workerId?.name === worker.name)
       );
 
-      // Latest or sum depending on preset
       const latestRecord = recordsForWorker[0];
       const status = latestRecord ? latestRecord.status : "Not Marked";
 
@@ -122,7 +130,6 @@ function Reports() {
     });
   }, [workers, attendanceRecords]);
 
-  // Filtered Rows by Status & Search
   const filteredReportRows = useMemo(() => {
     return reportRows.filter((row) => {
       const matchesStatus =
@@ -150,7 +157,6 @@ function Reports() {
   const presentPercentage =
     totalWorkers > 0 ? Math.round((presentCount / totalWorkers) * 100) : 0;
 
-  // Chart Data Preparation
   const pieData = [
     { name: "Present", value: presentCount, color: "#10B981" },
     { name: "Absent", value: absentCount, color: "#EF4444" },
@@ -158,15 +164,12 @@ function Reports() {
     { name: "Not Marked", value: notMarkedCount, color: "#64748B" },
   ].filter((d) => d.value > 0);
 
-  const barData = reportRows
-    .slice(0, 8)
-    .map((r) => ({
-      name: r.name.split(" ")[0],
-      Wage: r.wage,
-      Paid: r.totalPaid,
-    }));
+  const barData = reportRows.slice(0, 8).map((r) => ({
+    name: r.name.split(" ")[0],
+    Wage: r.wage,
+    Paid: r.totalPaid,
+  }));
 
-  // Export CSV
   const handleExportCSV = () => {
     const headers = ["Worker Name", "Phone", "Status", "Wage Earned (₹)", "Total Paid (₹)"];
     const csvRows = [
@@ -191,115 +194,127 @@ function Reports() {
     window.URL.revokeObjectURL(url);
   };
 
-  // Print Report
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="reports-container">
+    <div className="flex min-h-screen bg-slate-950 text-slate-100">
       <Sidebar />
 
-      <main className="reports-main">
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
         {/* Header */}
-        <header className="reports-header">
-          <div className="reports-title-section">
-            <h1>
-              <span>📈</span> Daily & Range Reports
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-400 mb-1">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Workforce Analytics</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Daily & Range Reports
             </h1>
-            <p>Fetch workforce data, attendance status, and financial analytics by date.</p>
+            <p className="text-sm text-slate-400 mt-1">
+              Filter workforce attendance data, wages, and payments by date.
+            </p>
           </div>
 
-          <div className="reports-header-actions">
-            <button className="btn-export" onClick={handleExportCSV}>
-              <span>📥</span> Export CSV
+          <div className="flex items-center gap-3 no-print">
+            <button
+              onClick={handleExportCSV}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600/10 hover:bg-brand-600/20 text-brand-400 border border-brand-500/30 font-semibold text-sm transition-all duration-200"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export CSV</span>
             </button>
-            <button className="btn-print" onClick={handlePrint}>
-              <span>🖨️</span> Print Report
+
+            <button
+              onClick={handlePrint}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition-all duration-200"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Print Report</span>
             </button>
           </div>
-        </header>
+        </div>
 
-        {/* Date & Filter Controls */}
-        <div className="reports-control-card">
-          {/* Presets */}
-          <div className="reports-presets">
-            <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "#94A3B8", marginRight: "6px" }}>
-              SELECT PERIOD:
+        {/* Control & Filter Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-5 no-print">
+          {/* Period Presets */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-brand-400" />
+              Period:
             </span>
-            <button
-              className={`preset-btn ${preset === "today" ? "active" : ""}`}
-              onClick={() => handlePresetChange("today")}
-            >
-              Today
-            </button>
-            <button
-              className={`preset-btn ${preset === "yesterday" ? "active" : ""}`}
-              onClick={() => handlePresetChange("yesterday")}
-            >
-              Yesterday
-            </button>
-            <button
-              className={`preset-btn ${preset === "thisWeek" ? "active" : ""}`}
-              onClick={() => handlePresetChange("thisWeek")}
-            >
-              This Week
-            </button>
-            <button
-              className={`preset-btn ${preset === "thisMonth" ? "active" : ""}`}
-              onClick={() => handlePresetChange("thisMonth")}
-            >
-              This Month
-            </button>
-            <button
-              className={`preset-btn ${preset === "range" ? "active" : ""}`}
-              onClick={() => setPreset("range")}
-            >
-              Custom Range
-            </button>
+            {[
+              { id: "today", label: "Today" },
+              { id: "yesterday", label: "Yesterday" },
+              { id: "thisWeek", label: "This Week" },
+              { id: "thisMonth", label: "This Month" },
+              { id: "range", label: "Custom Range" },
+            ].map((p) => (
+              <button
+                key={p.id}
+                onClick={() => handlePresetChange(p.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                  preset === p.id
+                    ? "bg-brand-600 text-white shadow-md shadow-brand-600/30"
+                    : "bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
           </div>
 
-          {/* Filters Row */}
-          <div className="reports-filters-row">
+          {/* Filters Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {preset !== "range" ? (
-              <div className="filter-group">
-                <label className="filter-label">Select Date</label>
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Select Date
+                </label>
                 <input
                   type="date"
-                  className="filter-input"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 outline-none"
                 />
               </div>
             ) : (
               <>
-                <div className="filter-group">
-                  <label className="filter-label">Start Date</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    Start Date
+                  </label>
                   <input
                     type="date"
-                    className="filter-input"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 outline-none"
                   />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">End Date</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    End Date
+                  </label>
                   <input
                     type="date"
-                    className="filter-input"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 outline-none"
                   />
                 </div>
               </>
             )}
 
-            <div className="filter-group">
-              <label className="filter-label">Attendance Status</label>
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Attendance Status
+              </label>
               <select
-                className="filter-select"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 outline-none"
               >
                 <option value="all">All Statuses</option>
                 <option value="Present">Present Only</option>
@@ -309,77 +324,93 @@ function Reports() {
               </select>
             </div>
 
-            <div className="filter-group" style={{ flex: 1.5 }}>
-              <label className="filter-label">Search Worker</label>
-              <input
-                type="text"
-                className="filter-input"
-                placeholder="Search by worker name or phone..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Search Worker
+              </label>
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Worker name or phone..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 text-xs rounded-xl pl-9 pr-3.5 py-2.5 outline-none"
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Summary KPI Cards */}
-        <div className="reports-kpi-grid">
-          <div className="kpi-card">
-            <div className="kpi-icon-wrap kpi-blue">👥</div>
-            <div className="kpi-info">
-              <span className="kpi-value">{totalWorkers}</span>
-              <span className="kpi-title">Total Workers</span>
+        {/* KPI Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xl font-extrabold text-white">{totalWorkers}</span>
+              <p className="text-[11px] font-medium text-slate-400">Total Workers</p>
             </div>
           </div>
 
-          <div className="kpi-card">
-            <div className="kpi-icon-wrap kpi-green">✅</div>
-            <div className="kpi-info">
-              <span className="kpi-value">{presentCount} <span style={{ fontSize: "0.85rem", color: "#10B981" }}>({presentPercentage}%)</span></span>
-              <span className="kpi-title">Present Workers</span>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xl font-extrabold text-white">
+                {presentCount} <span className="text-xs text-emerald-400">({presentPercentage}%)</span>
+              </span>
+              <p className="text-[11px] font-medium text-slate-400">Present Workers</p>
             </div>
           </div>
 
-          <div className="kpi-card">
-            <div className="kpi-icon-wrap kpi-red">❌</div>
-            <div className="kpi-info">
-              <span className="kpi-value">{absentCount}</span>
-              <span className="kpi-title">Absent Workers</span>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+              <XCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xl font-extrabold text-white">{absentCount}</span>
+              <p className="text-[11px] font-medium text-slate-400">Absent Workers</p>
             </div>
           </div>
 
-          <div className="kpi-card">
-            <div className="kpi-icon-wrap kpi-purple">💰</div>
-            <div className="kpi-info">
-              <span className="kpi-value">₹{totalWagesEarned.toLocaleString()}</span>
-              <span className="kpi-title">Total Wages Earned</span>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+              <IndianRupee className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xl font-extrabold text-white">₹{totalWagesEarned.toLocaleString()}</span>
+              <p className="text-[11px] font-medium text-slate-400">Total Wages Earned</p>
             </div>
           </div>
 
-          <div className="kpi-card">
-            <div className="kpi-icon-wrap kpi-amber">💸</div>
-            <div className="kpi-info">
-              <span className="kpi-value">₹{totalPaymentsMade.toLocaleString()}</span>
-              <span className="kpi-title">Total Payments Made</span>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+              <CreditCard className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xl font-extrabold text-white">₹{totalPaymentsMade.toLocaleString()}</span>
+              <p className="text-[11px] font-medium text-slate-400">Total Payments Made</p>
             </div>
           </div>
         </div>
 
-        {/* Analytics Charts */}
+        {/* Charts Grid */}
         {totalWorkers > 0 && (
-          <div className="reports-charts-grid">
-            {/* Pie Chart */}
-            <div className="chart-card">
-              <div className="chart-card-header">
-                <h3>Attendance Distribution</h3>
-                <p>Status breakdown for selected period</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 no-print">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+              <div className="mb-4">
+                <h3 className="text-base font-bold text-white">Attendance Distribution</h3>
+                <p className="text-xs text-slate-400">Breakdown for selected date period</p>
               </div>
 
               {pieData.length === 0 ? (
-                <div style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>No attendance recorded yet.</div>
+                <div className="py-16 text-center text-slate-500 text-sm">No attendance recorded yet.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={240}>
-                  <PieChart>
+                <ResponsiveContainer width="100%" height={220}>
+                  <RePieChart>
                     <Pie
                       data={pieData}
                       cx="50%"
@@ -393,30 +424,29 @@ function Reports() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ background: "#1E2640", border: "1px solid #334155", borderRadius: "10px", color: "#FFF" }} />
-                  </PieChart>
+                    <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: "10px", color: "#FFF" }} />
+                  </RePieChart>
                 </ResponsiveContainer>
               )}
             </div>
 
-            {/* Bar Chart */}
-            <div className="chart-card">
-              <div className="chart-card-header">
-                <h3>Worker Wages Comparison</h3>
-                <p>Earnings breakdown per worker</p>
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+              <div className="mb-4">
+                <h3 className="text-base font-bold text-white">Worker Wages Comparison</h3>
+                <p className="text-xs text-slate-400">Wage earnings per worker</p>
               </div>
 
               {barData.length === 0 ? (
-                <div style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>No wage data available.</div>
+                <div className="py-16 text-center text-slate-500 text-sm">No wage data available.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={barData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis dataKey="name" stroke="#94A3B8" />
-                    <YAxis stroke="#94A3B8" />
-                    <Tooltip contentStyle={{ background: "#1E2640", border: "1px solid #334155", borderRadius: "10px", color: "#FFF" }} />
+                <ResponsiveContainer width="100%" height={220}>
+                  <ReBarChart data={barData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                    <XAxis dataKey="name" stroke="#64748B" fontSize={12} />
+                    <YAxis stroke="#64748B" fontSize={12} />
+                    <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: "10px", color: "#FFF" }} />
                     <Bar dataKey="Wage" fill="#6366F1" radius={[6, 6, 0, 0]} />
-                  </BarChart>
+                  </ReBarChart>
                 </ResponsiveContainer>
               )}
             </div>
@@ -424,94 +454,87 @@ function Reports() {
         )}
 
         {/* Detailed Worker Report Table */}
-        <div className="reports-table-card">
-          <div className="table-header-info">
-            <h3>Detailed Worker Roster</h3>
-            <span className="table-badge">{filteredReportRows.length} RECORDS FOUND</span>
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-white">Detailed Worker Report</h2>
+              <p className="text-xs text-slate-400">Worker-by-worker record breakdown</p>
+            </div>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+              {filteredReportRows.length} RECORDS
+            </span>
           </div>
 
           {loading ? (
-            <div style={{ padding: "30px", textAlign: "center", color: "#94A3B8" }}>Loading report records...</div>
+            <div className="py-12 text-center text-slate-500 text-sm">Loading report records...</div>
           ) : filteredReportRows.length === 0 ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>
+            <div className="py-12 text-center text-slate-400 text-sm">
               No workers match the selected date and filters.
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="ui-table">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr>
-                    <th>Worker Name</th>
-                    <th>Phone</th>
-                    <th>Attendance Status</th>
-                    <th>Wage Earned</th>
-                    <th>Total Payments</th>
-                    <th>Balance Status</th>
+                  <tr className="border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="py-3 px-4">Worker Name</th>
+                    <th className="py-3 px-4">Phone Number</th>
+                    <th className="py-3 px-4">Attendance Status</th>
+                    <th className="py-3 px-4">Wage Earned</th>
+                    <th className="py-3 px-4">Total Payments</th>
+                    <th className="py-3 px-4">Balance Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {filteredReportRows.map((row) => {
-                    const statusClass =
-                      row.status === "Present"
-                        ? "status-present"
-                        : row.status === "Absent"
-                        ? "status-absent"
-                        : row.status === "Half Day"
-                        ? "status-halfday"
-                        : "status-pending";
-
-                    return (
-                      <tr key={row.id}>
-                        <td>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <div
-                              style={{
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "10px",
-                                background: "linear-gradient(135deg, #6366F1, #4F46E5)",
-                                color: "#FFF",
-                                fontWeight: "700",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {row.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span style={{ fontWeight: "600", color: "#FFF" }}>{row.name}</span>
+                <tbody className="divide-y divide-slate-800/60 text-sm text-slate-300">
+                  {filteredReportRows.map((row) => (
+                    <tr key={row.id} className="hover:bg-slate-850/50 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm">
+                            {row.name.charAt(0).toUpperCase()}
                           </div>
-                        </td>
-                        <td>{row.phone}</td>
-                        <td>
-                          <span className={`status-badge ${statusClass}`}>
-                            {row.status === "Present" && "✓ "}
-                            {row.status === "Absent" && "✕ "}
-                            {row.status === "Half Day" && "⚡ "}
-                            {row.status === "Not Marked" && "⏳ "}
-                            {row.status}
-                          </span>
-                        </td>
-                        <td style={{ fontWeight: "700", color: "#10B981" }}>
-                          ₹{row.wage.toLocaleString()}
-                        </td>
-                        <td style={{ fontWeight: "600", color: "#CBD5E1" }}>
-                          ₹{row.totalPaid.toLocaleString()}
-                        </td>
-                        <td>
-                          <span
-                            style={{
-                              fontWeight: "700",
-                              color: row.balance > 0 ? "#F59E0B" : row.balance === 0 ? "#10B981" : "#EF4444",
-                            }}
-                          >
-                            ₹{row.balance.toLocaleString()}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          <span className="font-semibold text-white">{row.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-slate-400">{row.phone}</td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                            row.status === "Present"
+                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                              : row.status === "Absent"
+                              ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                              : row.status === "Half Day"
+                              ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                              : "bg-slate-800 text-slate-400 border-slate-700"
+                          }`}
+                        >
+                          {row.status === "Present" && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                          {row.status === "Absent" && <XCircle className="w-3.5 h-3.5 text-rose-400" />}
+                          {row.status === "Half Day" && <Clock className="w-3.5 h-3.5 text-amber-400" />}
+                          {row.status}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-bold text-emerald-400">
+                        ₹{row.wage.toLocaleString()}
+                      </td>
+                      <td className="py-3.5 px-4 font-semibold text-slate-300">
+                        ₹{row.totalPaid.toLocaleString()}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`font-bold ${
+                            row.balance > 0
+                              ? "text-amber-400"
+                              : row.balance === 0
+                              ? "text-emerald-400"
+                              : "text-rose-400"
+                          }`}
+                        >
+                          ₹{row.balance.toLocaleString()}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -2,7 +2,21 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWorkers, getAttendance, deleteWorker } from "../services/api";
 import Sidebar from "../components/Sidebar";
-import "../styles/dashboard.css";
+import {
+  Users,
+  CalendarCheck,
+  IndianRupee,
+  BarChart3,
+  Plus,
+  Search,
+  Trash2,
+  ChevronRight,
+  Sparkles,
+  ArrowUpRight,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from "lucide-react";
 
 function Dashboard() {
   const [workers, setWorkers] = useState([]);
@@ -62,7 +76,7 @@ function Dashboard() {
     }
   };
 
-  // Calculations
+  // Metrics
   const totalWorkers = workers.length;
   const presentTodayCount = todayAttendance.filter((a) => a.status === "Present").length;
   const attendanceRate = totalWorkers > 0 ? Math.round((presentTodayCount / totalWorkers) * 100) : 0;
@@ -79,208 +93,215 @@ function Dashboard() {
   );
 
   return (
-    <div className="layout">
+    <div className="flex min-h-screen bg-slate-950 text-slate-100">
       <Sidebar />
 
-      <main className="main">
-        {/* Top Bar */}
-        <div className="topbar">
-          <div className="topbar-left">
-            <span className="topbar-eyebrow">{getGreeting().toUpperCase()}, {username.toUpperCase()} 🌿</span>
-            <h1>Executive Dashboard</h1>
-            <span style={{ fontSize: "0.9rem", color: "var(--text-light)" }}>{displayDate}</span>
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+        {/* Top Bar Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-400 mb-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{getGreeting()}, {username}</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Executive Dashboard
+            </h1>
+            <p className="text-sm text-slate-400 mt-1">{displayDate}</p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className="flex items-center gap-3">
             <button
-              className="btn-primary"
               onClick={() => navigate("/add-worker")}
-              style={{
-                background: "linear-gradient(135deg, #6366F1, #4F46E5)",
-                color: "#FFF",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "0.88rem",
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(99,102,241,0.3)",
-              }}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-600/30 transition-all duration-200"
             >
-              ➕ Add Worker
+              <Plus className="w-4 h-4" />
+              <span>Add Worker</span>
             </button>
 
             <button
               onClick={() => navigate("/attendance")}
-              style={{
-                background: "rgba(16, 185, 129, 0.15)",
-                color: "#10B981",
-                border: "1px solid rgba(16, 185, 129, 0.3)",
-                padding: "8px 16px",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "0.88rem",
-                cursor: "pointer",
-              }}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold text-sm transition-all duration-200"
             >
-              📅 Log Attendance
+              <CalendarCheck className="w-4 h-4" />
+              <span>Log Attendance</span>
             </button>
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="cards">
-          <div className="card card--blue" onClick={() => navigate("/add-worker")} style={{ cursor: "pointer" }}>
-            <div className="card-icon card-icon--blue">👥</div>
-            <div className="card-body">
-              <h3>{totalWorkers}</h3>
-              <p>Total Registered Workers</p>
+        {/* Metric Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Card 1 */}
+          <div
+            onClick={() => navigate("/add-worker")}
+            className="group cursor-pointer bg-slate-900 border border-slate-800 hover:border-brand-500/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                <Users className="w-6 h-6" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-brand-400 transition-colors" />
             </div>
-            <span className="card-arrow">↗</span>
+            <div className="mt-4">
+              <span className="text-2xl font-extrabold text-white">{totalWorkers}</span>
+              <p className="text-xs font-medium text-slate-400 mt-0.5">Total Registered Workers</p>
+            </div>
           </div>
 
-          <div className="card card--amber" onClick={() => navigate("/attendance")} style={{ cursor: "pointer" }}>
-            <div className="card-icon card-icon--amber">📋</div>
-            <div className="card-body">
-              <h3>{presentTodayCount} <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>({attendanceRate}%)</span></h3>
-              <p>Present Today</p>
+          {/* Card 2 */}
+          <div
+            onClick={() => navigate("/attendance")}
+            className="group cursor-pointer bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                <CalendarCheck className="w-6 h-6" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition-colors" />
             </div>
-            <span className="card-arrow">↗</span>
+            <div className="mt-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-extrabold text-white">{presentTodayCount}</span>
+                <span className="text-xs font-bold text-emerald-400">({attendanceRate}%)</span>
+              </div>
+              <p className="text-xs font-medium text-slate-400 mt-0.5">Present Today</p>
+            </div>
           </div>
 
-          <div className="card card--green" onClick={() => navigate("/reports")} style={{ cursor: "pointer" }}>
-            <div className="card-icon card-icon--green">₹</div>
-            <div className="card-body">
-              <h3>₹{totalPaid.toLocaleString()}</h3>
-              <p>Total Payments Disbursed</p>
+          {/* Card 3 */}
+          <div
+            onClick={() => navigate("/reports")}
+            className="group cursor-pointer bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                <IndianRupee className="w-6 h-6" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors" />
             </div>
-            <span className="card-arrow">↗</span>
+            <div className="mt-4">
+              <span className="text-2xl font-extrabold text-white">₹{totalPaid.toLocaleString()}</span>
+              <p className="text-xs font-medium text-slate-400 mt-0.5">Total Payments Disbursed</p>
+            </div>
           </div>
 
-          <div className="card card--purple" onClick={() => navigate("/reports")} style={{ cursor: "pointer" }}>
-            <div className="card-icon card-icon--purple">📊</div>
-            <div className="card-body">
-              <h3>View Reports</h3>
-              <p>Date Analytics & Reports</p>
+          {/* Card 4 */}
+          <div
+            onClick={() => navigate("/reports")}
+            className="group cursor-pointer bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                <BarChart3 className="w-6 h-6" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
             </div>
-            <span className="card-arrow">↗</span>
+            <div className="mt-4">
+              <span className="text-lg font-bold text-white">Date Analytics</span>
+              <p className="text-xs font-medium text-slate-400 mt-0.5">View Reports & Data</p>
+            </div>
           </div>
         </div>
 
-        {/* Worker Roster Table */}
-        <div className="table-card" style={{ marginTop: "24px" }}>
-          <div className="table-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+        {/* Workforce Roster Table */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: "700" }}>Active Workforce Roster</h3>
-              <span className="table-card-meta">{totalWorkers} REGISTERED WORKERS</span>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Active Workforce Roster</span>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                  {totalWorkers} Total
+                </span>
+              </h2>
             </div>
 
-            <input
-              type="text"
-              placeholder="Search by worker name or phone..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                background: "rgba(0, 0, 0, 0.05)",
-                border: "1px solid var(--border)",
-                padding: "8px 14px",
-                borderRadius: "10px",
-                fontSize: "0.88rem",
-                minWidth: "240px",
-              }}
-            />
+            <div className="relative min-w-[260px]">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search worker by name or phone..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 transition-colors outline-none"
+              />
+            </div>
           </div>
 
           {loading ? (
-            <p className="table-empty">Loading roster data...</p>
+            <div className="py-12 text-center text-slate-500 text-sm">Loading workforce roster...</div>
           ) : filteredWorkers.length === 0 ? (
-            <p className="table-empty">No workers found matching your search. Click "Add Worker" to register new staff.</p>
+            <div className="py-12 text-center text-slate-400 text-sm">
+              No workers found matching your search. Click "Add Worker" to register staff.
+            </div>
           ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Worker Name</th>
-                    <th>Phone</th>
-                    <th>Today Status</th>
-                    <th>Actions</th>
+                  <tr className="border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="py-3 px-4">#</th>
+                    <th className="py-3 px-4">Worker Name</th>
+                    <th className="py-3 px-4">Phone Number</th>
+                    <th className="py-3 px-4">Today Status</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-800/60 text-sm text-slate-300">
                   {filteredWorkers.map((w, idx) => {
-                    const todayRecord = todayAttendance.find((a) => a.workerId?._id === w._id || a.workerId === w._id);
+                    const todayRecord = todayAttendance.find(
+                      (a) => a.workerId?._id === w._id || a.workerId === w._id
+                    );
                     const status = todayRecord ? todayRecord.status : "Not Marked";
 
                     return (
-                      <tr key={w._id}>
-                        <td>
-                          <span style={{ fontFamily: "monospace", fontSize: "0.78rem", opacity: 0.6 }}>
-                            {String(idx + 1).padStart(2, "0")}
-                          </span>
+                      <tr key={w._id} className="hover:bg-slate-850/50 transition-colors">
+                        <td className="py-3.5 px-4 font-mono text-xs text-slate-500">
+                          {String(idx + 1).padStart(2, "0")}
                         </td>
-                        <td>
-                          <div className="worker-cell">
-                            <div className="worker-cell-avatar">
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm">
                               {w.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="worker-cell-name">{w.name}</span>
+                            <span className="font-semibold text-white">{w.name}</span>
                           </div>
                         </td>
-                        <td>
-                          <span className="phone-cell">{w.phone || "—"}</span>
+                        <td className="py-3.5 px-4 font-medium text-slate-400">
+                          {w.phone || "—"}
                         </td>
-                        <td>
+                        <td className="py-3.5 px-4">
                           <span
-                            style={{
-                              padding: "4px 10px",
-                              borderRadius: "999px",
-                              fontSize: "0.78rem",
-                              fontWeight: "600",
-                              background:
-                                status === "Present"
-                                  ? "rgba(16, 185, 129, 0.15)"
-                                  : status === "Absent"
-                                  ? "rgba(239, 68, 68, 0.15)"
-                                  : status === "Half Day"
-                                  ? "rgba(245, 158, 11, 0.15)"
-                                  : "rgba(148, 163, 184, 0.15)",
-                              color:
-                                status === "Present"
-                                  ? "#10B981"
-                                  : status === "Absent"
-                                  ? "#EF4444"
-                                  : status === "Half Day"
-                                  ? "#F59E0B"
-                                  : "#64748B",
-                            }}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                              status === "Present"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : status === "Absent"
+                                ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                : status === "Half Day"
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                : "bg-slate-800 text-slate-400 border-slate-700"
+                            }`}
                           >
-                            {status === "Present" && "✓ "}
-                            {status === "Absent" && "✕ "}
+                            {status === "Present" && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                            {status === "Absent" && <XCircle className="w-3.5 h-3.5 text-rose-400" />}
+                            {status === "Half Day" && <Clock className="w-3.5 h-3.5 text-amber-400" />}
                             {status}
                           </span>
                         </td>
-                        <td>
-                          <div style={{ display: "flex", gap: "8px" }}>
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
                             <button
-                              className="view-btn"
                               onClick={() => navigate(`/worker/${w._id}`)}
+                              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium inline-flex items-center gap-1 transition-colors"
                             >
-                              Details →
+                              <span>Details</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
                             </button>
+
                             <button
                               onClick={() => handleDeleteWorker(w._id, w.name)}
-                              style={{
-                                background: "rgba(239, 68, 68, 0.1)",
-                                color: "#EF4444",
-                                border: "none",
-                                padding: "4px 8px",
-                                borderRadius: "8px",
-                                cursor: "pointer",
-                                fontSize: "0.8rem",
-                              }}
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition-colors"
+                              title="Delete Worker"
                             >
-                              🗑️
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </td>
