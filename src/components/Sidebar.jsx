@@ -45,30 +45,30 @@ function Sidebar() {
     <>
       {/* ================= MOBILE TOP HEADER ================= */}
       <header className="md:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between no-print">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none transition-colors"
+            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none transition-colors shrink-0"
             aria-label="Toggle Menu"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <div>
+          <div className="truncate">
             <h2 className="text-base font-bold text-gray-900 tracking-tight leading-none">
               Daily<span className="text-brand-600">Wage</span>
             </h2>
-            <p className="text-[10px] text-gray-400 font-medium">{t("tagline")}</p>
+            <p className="text-[10px] text-gray-400 font-medium truncate">{t("tagline")}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Language Selector Dropdown for Mobile Header */}
           <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-xs">
-            <Globe className="w-3.5 h-3.5 text-gray-400 mr-1" />
+            <Globe className="w-3.5 h-3.5 text-gray-400 mr-1 shrink-0" />
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-gray-700 font-medium focus:outline-none text-xs"
+              className="bg-transparent text-gray-700 font-medium focus:outline-none text-xs cursor-pointer"
             >
               {languages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
@@ -78,7 +78,7 @@ function Sidebar() {
             </select>
           </div>
 
-          <div className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center">
+          <div className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center shrink-0">
             {username.charAt(0).toUpperCase()}
           </div>
         </div>
@@ -137,7 +137,7 @@ function Sidebar() {
                       isActive ? "text-brand-600" : "text-gray-400"
                     }`}
                   />
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </button>
               );
             })}
@@ -147,15 +147,15 @@ function Sidebar() {
         {/* Drawer Footer */}
         <div className="px-3 pb-4 space-y-3">
           {/* Language Switcher */}
-          <div className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-between">
-            <span className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
+          <div className="space-y-1">
+            <label className="block text-[11px] font-medium text-gray-400 px-1 flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-gray-400" />
-              Language
-            </span>
+              <span>Language</span>
+            </label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-white border border-gray-200 text-gray-800 rounded px-2 py-1 text-xs outline-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-brand-500 cursor-pointer truncate"
             >
               {languages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
@@ -213,7 +213,7 @@ function Sidebar() {
                       isActive ? "text-brand-600" : "text-gray-400"
                     }`}
                   />
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </button>
               );
             })}
@@ -223,15 +223,15 @@ function Sidebar() {
         {/* Footer */}
         <div className="px-3 pb-4 space-y-3">
           {/* Language Switcher */}
-          <div className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-between">
-            <span className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
+          <div className="space-y-1">
+            <label className="block text-[11px] font-medium text-gray-400 px-1 flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-gray-400" />
-              Language
-            </span>
+              <span>Language</span>
+            </label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-white border border-gray-200 text-gray-800 rounded px-2 py-1 text-xs outline-none cursor-pointer"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-brand-500 cursor-pointer truncate"
             >
               {languages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
