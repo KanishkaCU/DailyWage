@@ -20,11 +20,6 @@ export default {
           900: '#312e81',
           950: '#1e1b4b',
         },
-        slate: {
-          850: '#131c2e',
-          900: '#0f172a',
-          950: '#090d16',
-        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
